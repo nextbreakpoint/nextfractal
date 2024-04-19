@@ -40,7 +40,7 @@ public class DSLParser {
 		this.className = className;
 	}
 	
-	public ParserResult parse(String source) throws ParserException {
+	public DSLParserResult parse(String source) throws ParserException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
 			return new InterpreterDSLParser().parse(source);

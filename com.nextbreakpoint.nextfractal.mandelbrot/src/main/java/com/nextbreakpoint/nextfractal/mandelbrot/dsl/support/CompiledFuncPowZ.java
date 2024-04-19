@@ -46,7 +46,7 @@ public class CompiledFuncPowZ extends CompiledExpression {
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		throw new ASTException("Cannot assign function output to real number", getLocation());
+		throw new ASTException("Can't assign function output to real number", getLocation());
 	}
 
 	@Override

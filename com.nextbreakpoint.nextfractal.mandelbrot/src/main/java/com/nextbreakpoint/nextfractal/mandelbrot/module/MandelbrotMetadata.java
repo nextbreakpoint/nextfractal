@@ -24,11 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.module;
 
-import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Double2D;
 import com.nextbreakpoint.nextfractal.core.common.Double4D;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import lombok.Builder;
 
+@Builder(setterPrefix = "with", toBuilder = true)
 public class MandelbrotMetadata implements Metadata {
 	private final Double4D translation;
 	private final Double4D rotation;

@@ -126,12 +126,12 @@ public class InterpreterOrbitFactory implements ClassFactory<Orbit> {
 			long length = e.getLocation().getStopIndex() - e.getLocation().getStartIndex();
 			String message = e.getMessage();
 			errors.add(new SourceError(type, line, charPositionInLine, index, length, message));
-			throw new ParserException("Cannot build orbit", errors);
+			throw new ParserException("Can't build orbit", errors);
 		} catch (Exception e) {
 			SourceError.ErrorType type = SourceError.ErrorType.SCRIPT_COMPILER;
 			String message = e.getMessage();
 			errors.add(new SourceError(type, 0, 0, 0, 0, message));
-			throw new ParserException("Cannot build orbit", errors);
+			throw new ParserException("Can't build orbit", errors);
 		}
 	}
 

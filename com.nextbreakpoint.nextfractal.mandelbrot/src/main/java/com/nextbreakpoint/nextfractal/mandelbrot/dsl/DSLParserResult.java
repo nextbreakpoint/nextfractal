@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTFractal;
 
 import java.util.List;
 
-public class ParserResult {
+public class DSLParserResult {
 	private ASTFractal ast;
 	private Type type;
 	private String orbitSource;
@@ -39,7 +39,7 @@ public class ParserResult {
 	private String packageName;
 	private String className;
 
-	public ParserResult(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<SourceError> errors, String packageName, String className) {
+	public DSLParserResult(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<SourceError> errors, String packageName, String className) {
 		this.ast = ast;
 		this.type = type;
 		this.source = source;

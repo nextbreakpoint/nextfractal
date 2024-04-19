@@ -22,43 +22,18 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.dsl;
+package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.core.common.SourceError;
+import com.nextbreakpoint.nextfractal.core.params.Attribute;
 
-import java.util.List;
+public interface AttributeEditorFactory {
+	/**
+	 * @return
+	 */
+	String getId();
 
-public class ParserResult {
-	private CFDG cfdg;
-	private Type type;
-	private String source;
-	private List<SourceError> errors;
-
-	public ParserResult(CFDG cfdg, Type type, String source, List<SourceError> errors) {
-		this.cfdg = cfdg;
-		this.type = type;
-		this.source = source;
-		this.errors = errors;
-	}
-
-	public CFDG getCFDG() {
-		return cfdg;
-	}
-
-	public String getSource() {
-		return source;
-	}
-
-	public List<SourceError> getErrors() {
-		return errors;
-	}
-
-	public Type getType() {
-		return type;
-	}
-
-	public enum Type {
-		INTERPRETER
-	}
+	/**
+	 * @return
+	 */
+	AttributeEditor createAttributeEditor(Attribute attribute);
 }

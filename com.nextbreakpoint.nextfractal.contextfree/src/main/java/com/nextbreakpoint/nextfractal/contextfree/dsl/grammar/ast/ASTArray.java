@@ -91,7 +91,7 @@ public class ASTArray extends ASTExpression {
 			if (renderer == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException(location);
 			double[] i = new double[1];
 			if (args.evaluate(i, 1, renderer) != 1) {
-				driver.error("Cannot evaluate array index", location);
+				driver.error("Can't evaluate array index", location);
 				return -1;
 			}
 			int index = (int)i[0];
@@ -123,7 +123,7 @@ public class ASTArray extends ASTExpression {
 		}
 		double[] i = new double[1];
 		if (args.evaluate(i, 1) != 1) {
-			driver.error("Cannot evaluate array index", location);
+			driver.error("Can't evaluate array index", location);
 			return this;
 		}
 		int index = (int)i[0];

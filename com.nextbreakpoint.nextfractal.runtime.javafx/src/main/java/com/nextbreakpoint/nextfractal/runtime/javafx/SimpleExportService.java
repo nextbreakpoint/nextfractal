@@ -37,6 +37,7 @@ import com.nextbreakpoint.nextfractal.runtime.encode.RAFEncoderContext;
 import com.nextbreakpoint.nextfractal.runtime.export.AbstractExportService;
 import com.nextbreakpoint.nextfractal.runtime.export.ExportServiceDelegate;
 import javafx.application.Platform;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -49,12 +50,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Log
 public class SimpleExportService extends AbstractExportService {
-	private static final Logger logger = Logger.getLogger(SimpleExportService.class.getName());
-
 	private final Map<String, List<Future<ExportJobHandle>>> futures = new HashMap<>();
 	private final Map<String, EncoderHandle> handles = new HashMap<>();
 
@@ -149,7 +148,7 @@ public class SimpleExportService extends AbstractExportService {
 		}
 	}
 
-	private void closeEncoder(ExportHandle exportHandle, EncoderHandle encoderHandle) throws IOException, EncoderException {
+	private void closeEncoder(ExportHandle exportHandle, EncoderHandle encoderHandle) throws EncoderException {
 		try {
 			exportHandle.getEncoder().close(encoderHandle);
 		} finally {
@@ -166,7 +165,7 @@ public class SimpleExportService extends AbstractExportService {
 		if (exportHandle.isCancelled()) {
 			exportHandle.setState(ExportState.INTERRUPTED);
 		} else if (exportHandle.isSessionCompleted()) {
-			logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
+			log.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
 			final int index = exportHandle.getFrameNumber();
 			tryEncodeFrame(exportHandle, index, 1)
 				.onSuccess(s -> exportHandle.setState(ExportState.COMPLETED))
@@ -176,7 +175,7 @@ public class SimpleExportService extends AbstractExportService {
 			final int index = exportHandle.getFrameNumber();
 			int count = 0;
 			do {
-				logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
+				log.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
 				exportHandle.nextFrame();
 				count += 1;
 			} while (count < 100 && !isLastFrame(exportHandle) && !isKeyFrame(exportHandle) && !isTimeAnimation(exportHandle));
@@ -210,7 +209,7 @@ public class SimpleExportService extends AbstractExportService {
 	}
 
 	private List<Future<ExportJobHandle>> removeTerminatedTasks(List<Future<ExportJobHandle>> tasks) {
-		tasks.removeAll(tasks.stream().filter(Future::isDone).collect(Collectors.toList()));
+		tasks.removeAll(tasks.stream().filter(Future::isDone).toList());
 		return tasks;
 	}
 

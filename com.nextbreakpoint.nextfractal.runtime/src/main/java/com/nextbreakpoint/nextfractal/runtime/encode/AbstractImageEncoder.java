@@ -34,18 +34,17 @@ import com.nextbreakpoint.nextfractal.core.encode.EncoderContext;
 import com.nextbreakpoint.nextfractal.core.encode.EncoderDelegate;
 import com.nextbreakpoint.nextfractal.core.encode.EncoderException;
 import com.nextbreakpoint.nextfractal.core.encode.EncoderHandle;
+import lombok.extern.java.Log;
 
 import java.io.File;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Andrea Medeghini
  */
+@Log
 public abstract class AbstractImageEncoder implements Encoder {
-	private static final Logger logger = Logger.getLogger(AbstractImageEncoder.class.getName());
-
 	private EncoderDelegate delegate;
 
 	static {
@@ -126,8 +125,8 @@ public abstract class AbstractImageEncoder implements Encoder {
 			RGBQUAD value = null;
 			FIBITMAP dib = null;
 			try {
-				if (AbstractImageEncoder.logger.isLoggable(Level.FINE)) {
-					AbstractImageEncoder.logger.fine("Start encoding...");
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Start encoding...");
 				}
 				long time = System.currentTimeMillis();
 				int channels = isAlphaSupported() ? 4 : 3;
@@ -157,8 +156,8 @@ public abstract class AbstractImageEncoder implements Encoder {
 				if (delegate == null || !delegate.isInterrupted()) {
 					FreeImage4Java.FreeImage_Save(getFormat(getFormatName()), dib, path.getAbsolutePath(), 0);
 					time = System.currentTimeMillis() - time;
-					if (AbstractImageEncoder.logger.isLoggable(Level.INFO)) {
-						AbstractImageEncoder.logger.info("Image exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
+					if (log.isLoggable(Level.INFO)) {
+						log.info("Image exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
 					}
 					if (delegate != null) {
 						delegate.didProgressChanged(100f);

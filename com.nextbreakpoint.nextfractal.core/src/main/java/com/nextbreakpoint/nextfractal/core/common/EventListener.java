@@ -25,5 +25,5 @@
 package com.nextbreakpoint.nextfractal.core.common;
 
 public interface EventListener {
-    void eventPosted(Object... event);
+    void onEvent(Object event);
 }

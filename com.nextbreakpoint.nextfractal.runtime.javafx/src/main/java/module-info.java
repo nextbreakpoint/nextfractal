@@ -23,6 +23,7 @@
  *
  */
 module com.nextbreakpoint.nextfractal.runtime.javafx {
+    requires static lombok;
     requires java.logging;
     requires java.desktop;
     requires java.compiler;

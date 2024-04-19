@@ -25,17 +25,18 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.common.ParserResult;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionActionFired;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
-import com.nextbreakpoint.nextfractal.core.event.EditorSourceChanged;
 import com.nextbreakpoint.nextfractal.core.event.HideControlsFired;
-import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
 import com.nextbreakpoint.nextfractal.core.event.RenderDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.RenderErrorChanged;
 import com.nextbreakpoint.nextfractal.core.event.RenderPointChanged;
@@ -51,6 +52,7 @@ import com.nextbreakpoint.nextfractal.core.event.TimeAnimationActionFired;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
+import com.nextbreakpoint.nextfractal.core.javafx.Tool;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
@@ -66,11 +68,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.*;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ClassFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.mandelbrot.javafx.tools.ToolContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.javafx.tools.ToolMove;
+import com.nextbreakpoint.nextfractal.mandelbrot.javafx.tools.ToolPick;
+import com.nextbreakpoint.nextfractal.mandelbrot.javafx.tools.ToolRotate;
+import com.nextbreakpoint.nextfractal.mandelbrot.javafx.tools.ToolZoom;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotOptions;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.animation.AnimationTimer;
@@ -121,6 +128,7 @@ public class RenderPane extends BorderPane {
 	private final BooleanObservableValue timeProperty;
 	private final BooleanObservableValue juliaProperty;
 	private final BooleanObservableValue captureProperty;
+
 	private final RendererCoordinator[] coordinators;
 	private RendererCoordinator juliaCoordinator;
 	private AnimationTimer timer;
@@ -136,7 +144,7 @@ public class RenderPane extends BorderPane {
 	private volatile boolean playback;
 	private volatile boolean timeAnimation;
 	private volatile MandelbrotSession mandelbrotSession;
-	private ParserResult parserResult;
+	private DSLParserResult parserResult;
 	private ClassFactory<Orbit> orbitFactory;
 	private ClassFactory<Color> colorFactory;
 	private String astOrbit;
@@ -152,6 +160,7 @@ public class RenderPane extends BorderPane {
 
 		mandelbrotSession = session;
 
+		//TODO abstract properties
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
 
@@ -178,15 +187,19 @@ public class RenderPane extends BorderPane {
 
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
-		
+
+		//TODO move to strategy class
 		renderFactory = new JavaFXRendererFactory();
 
+		//TODO move to strategy class
 		coordinators = new RendererCoordinator[rows * columns];
-		
+
+		//TODO move to strategy class
 		Map<String, Integer> hints = new HashMap<>();
 		hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		createCoordinators(rows, columns, hints);
-		
+
+		//TODO move to strategy class
 		Map<String, Integer> juliaHints = new HashMap<>();
 		juliaHints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		juliaCoordinator = createJuliaCoordinator(juliaHints);
@@ -254,6 +267,7 @@ public class RenderPane extends BorderPane {
 		controls.setBottom(toolButtons);
 		toolButtons.setOpacity(0.9);
 
+		//TODO abstract code
         Canvas fractalCanvas = new Canvas(width, height);
         GraphicsContext gcFractalCanvas = fractalCanvas.getGraphicsContext2D();
         gcFractalCanvas.setFill(javafx.scene.paint.Color.WHITESMOKE);
@@ -289,56 +303,8 @@ public class RenderPane extends BorderPane {
         juliaCanvas.setOpacity(0.8);
         juliaCanvas.setVisible(false);
 
-		ToolContext context = new ToolContext() {
-			public Number getInitialSize() {
-				return coordinators[0].getInitialSize();
-			}
-
-			public Number getInitialCenter() {
-				return coordinators[0].getInitialCenter();
-			}
-
-			public double getZoomSpeed() {
-				return zoomSpeed;
-			}
-
-			public RendererFactory getRendererFactory() {
-				return renderFactory;
-			}
-
-			@Override
-			public double getWidth() {
-				return width;
-			}
-
-			@Override
-			public double getHeight() {
-				return height;
-			}
-
-			@Override
-			public MandelbrotMetadata getMetadata() {
-				return (MandelbrotMetadata) mandelbrotSession.getMetadata();
-			}
-
-			@Override
-			public void setPoint(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
-				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
-				eventBus.postEvent(RenderPointChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
-			}
-
-			@Override
-			public void setView(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
-				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
-				eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
-			}
-
-			@Override
-			public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
-				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
-				eventBus.postEvent(RenderTimeChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
-			}
-		};
+		//TODO move to strategy class
+		ToolContext<MandelbrotMetadata> context = getToolContext(eventBus, width, height);
 
 		currentTool = new ToolZoom(context, true);
 		zoominButton.setSelected(true);
@@ -415,19 +381,19 @@ public class RenderPane extends BorderPane {
 				case T: {
 					showTrapsProperty.setValue(!showTrapsProperty.getValue());
 					final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 					break;
 				}
 				case O: {
 					showOrbitProperty.setValue(!showOrbitProperty.getValue());
 					final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 					break;
 				}
 				case P: {
 					showPreviewProperty.setValue(!showPreviewProperty.getValue());
 					final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 					break;
 				}
 			}
@@ -457,12 +423,13 @@ public class RenderPane extends BorderPane {
 			}
 		});
 
+		//TODO abstract code
 		zoominButton.setOnAction(e -> {
 			boolean appendToHistory = currentTool instanceof ToolPick;
 			currentTool = new ToolZoom(context, true);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(appendToHistory).build());
 		});
 		
 		zoomoutButton.setOnAction(e -> {
@@ -470,7 +437,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolZoom(context, false);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(appendToHistory).build());
 		});
 		
 		moveButton.setOnAction(e -> {
@@ -478,7 +445,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolMove(context);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(appendToHistory).build());
 		});
 		
 		rotateButton.setOnAction(e -> {
@@ -486,7 +453,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolRotate(context);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(appendToHistory).build());
 		});
 		
 		pickButton.setOnAction(e -> {
@@ -496,7 +463,7 @@ public class RenderPane extends BorderPane {
 			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, createMandelbrotOptions(metadata));
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(appendToHistory).build());
 			juliaProperty.setValue(false);
 		});
 
@@ -515,7 +482,7 @@ public class RenderPane extends BorderPane {
 //			if (!hasError) {
                 showOrbitProperty.setValue(!showOrbitProperty.getValue());
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-				eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+				eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 //            }
 		});
 
@@ -622,100 +589,157 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
+		//TODO move to application handler
 		eventBus.subscribe(SessionReportChanged.class.getSimpleName(), event -> {
 //			timeProperty.setValue(false);
-			ParserResult report = (ParserResult) ((SessionReportChanged) event[0]).report();
-			List<SourceError> lastErrors = updateReport(report);
+			ParserResult report = ((SessionReportChanged) event).result();
+			List<SourceError> lastErrors = updateReport((DSLParserResult) report.result());
 			if (lastErrors.isEmpty()) {
-				MandelbrotSession newSession = (MandelbrotSession) ((SessionReportChanged) event[0]).session();
-				notifySessionChanged(eventBus, newSession, ((SessionReportChanged) event[0]).continuous(), true, ((SessionReportChanged) event[0]).timeAnimation());
+				MandelbrotSession newSession = (MandelbrotSession) ((SessionReportChanged) event).session();
+				notifySessionChanged(eventBus, newSession, ((SessionReportChanged) event).continuous(), ((SessionReportChanged) event).appendToHistory());
 			}
 		});
 
-//		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> loadData((MandelbrotSession) ((SessionDataLoaded) event[0]).session()));
+//		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> loadData((MandelbrotSession) ((SessionDataLoaded) event).session()));
 		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> restoreTool(context, pickButton, zoominButton));
+		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateData((MandelbrotSession) ((SessionDataChanged) event).session(), ((SessionDataChanged) event).continuous()));
+		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> restoreView((MandelbrotSession) ((SessionDataChanged) event).session()));
+		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateJulia((MandelbrotSession) ((SessionDataChanged) event).session()));
 
-		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateData((MandelbrotSession) ((SessionDataChanged) event[0]).session(), ((SessionDataChanged) event[0]).continuous(), ((SessionDataChanged) event[0]).timeAnimation()));
-		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> restoreView((MandelbrotSession) ((SessionDataChanged) event[0]).session()));
-		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateJulia((MandelbrotSession) ((SessionDataChanged) event[0]).session()));
-
-		eventBus.subscribe("capture-clips-start", event -> playback = true);
-
-		eventBus.subscribe("capture-clips-stop", event -> playback = false);
+		eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> playback = true);
+		eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> playback = false);
 
 		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> timeProperty.setValue(false));
-		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> loadData((MandelbrotSession) ((PlaybackDataLoaded) event[0]).session(), ((PlaybackDataLoaded) event[0]).continuous(), ((PlaybackDataLoaded) event[0]).timeAnimation()));
-		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> restoreView((MandelbrotSession) ((PlaybackDataLoaded) event[0]).session()));
+		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> loadData((MandelbrotSession) ((PlaybackDataLoaded) event).session(), ((PlaybackDataLoaded) event).continuous()));
+		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> restoreView((MandelbrotSession) ((PlaybackDataLoaded) event).session()));
+		eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> updateData((MandelbrotSession) ((PlaybackDataChanged) event).session(), ((PlaybackDataChanged) event).continuous()));
+		eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> restoreView((MandelbrotSession) ((PlaybackDataChanged) event).session()));
 
-		eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> updateData((MandelbrotSession) ((PlaybackDataChanged) event[0]).session(), ((PlaybackDataChanged) event[0]).continuous(), ((PlaybackDataChanged) event[0]).timeAnimation()));
-		eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> restoreView((MandelbrotSession) ((PlaybackDataChanged) event[0]).session()));
-
-		eventBus.subscribe(EditorSourceChanged.class.getSimpleName(), event -> {
-//			MandelbrotSession newSession = new MandelbrotSession(((EditorSourceChanged) event[0]).source(), (MandelbrotMetadata) mandelbrotSession.getMetadata());
-//          notifySessionChanged(eventBus, newSession, false, true);
-        });
-
+		//TODO move to application handler
 		eventBus.subscribe(EditorDataChanged.class.getSimpleName(), event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((EditorDataChanged)event[0]).session();
-			boolean continuous = ((EditorDataChanged)event[0]).continuous();
-			boolean appendHistory = ((EditorDataChanged)event[0]).timeAnimation();
-			notifySessionChanged(eventBus, newSession, continuous, true, appendHistory && !continuous);
+			MandelbrotSession newSession = (MandelbrotSession) ((EditorDataChanged)event).session();
+			boolean continuous = ((EditorDataChanged)event).continuous();
+			boolean appendToHistory = ((EditorDataChanged)event).appendToHistory();
+			notifySessionChanged(eventBus, newSession, continuous, appendToHistory && !continuous);
         });
 
+		//TODO move to application handler
 		eventBus.subscribe(RenderDataChanged.class.getSimpleName(), event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((RenderDataChanged) event[0]).session();
-			boolean continuous = ((RenderDataChanged) event[0]).continuous();
-			boolean appendHistory = ((RenderDataChanged) event[0]).timeAnimation();
-			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
+			MandelbrotSession newSession = (MandelbrotSession) ((RenderDataChanged) event).session();
+			boolean continuous = ((RenderDataChanged) event).continuous();
+			boolean appendToHistory = ((RenderDataChanged) event).appendToHistory();
+			notifySessionChanged(eventBus, newSession, continuous, appendToHistory && !continuous);
 		});
 
+		//TODO move to application handler
 		eventBus.subscribe(RenderPointChanged.class.getSimpleName(), event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((RenderPointChanged) event[0]).session();
-			boolean continuous = ((RenderPointChanged) event[0]).continuous();
-			boolean appendHistory = ((RenderPointChanged) event[0]).timeAnimation();
-			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
+			MandelbrotSession newSession = (MandelbrotSession) ((RenderPointChanged) event).session();
+			boolean continuous = ((RenderPointChanged) event).continuous();
+			boolean appendToHistory = ((RenderPointChanged) event).appendToHistory();
+			notifySessionChanged(eventBus, newSession, continuous, appendToHistory && !continuous);
 		});
 
+		//TODO move to application handler
 //		eventBus.subscribe(RenderModeChanged.class.getSimpleName(), event -> {
-//			MandelbrotSession newSession = (MandelbrotSession) ((RenderModeChanged) event[0]).session();
-//			boolean continuous = ((RenderModeChanged) event[0]).continuous();
-//			boolean appendHistory = ((RenderModeChanged) event[0]).timeAnimation();
-//			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
+//			MandelbrotSession newSession = (MandelbrotSession) ((RenderModeChanged) event).session();
+//			boolean continuous = ((RenderModeChanged) event).continuous();
+//			boolean appendToHistory = ((RenderModeChanged) event).appendToHistory();
+//			notifySessionChanged(eventBus, newSession, continuous, appendToHistory && !continuous);
 //		});
 
+		//TODO move to application handler
 		eventBus.subscribe(RenderTimeChanged.class.getSimpleName(), event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((RenderTimeChanged) event[0]).session();
-			boolean continuous = ((RenderTimeChanged) event[0]).continuous();
-			boolean appendHistory = ((RenderTimeChanged) event[0]).timeAnimation();
-			notifySessionChanged(eventBus, newSession, continuous, true, appendHistory && !continuous);
+			MandelbrotSession newSession = (MandelbrotSession) ((RenderTimeChanged) event).session();
+			boolean continuous = ((RenderTimeChanged) event).continuous();
+			boolean appendToHistory = ((RenderTimeChanged) event).appendToHistory();
+			notifySessionChanged(eventBus, newSession, continuous, appendToHistory && !continuous);
 		});
 
+		//TODO move to application handler
 		eventBus.subscribe(RenderStatusChanged.class.getSimpleName(), event -> {
-			eventBus.postEvent(SessionStatusChanged.builder().status(((RenderStatusChanged) event[0]).status()).build());
+			eventBus.postEvent(SessionStatusChanged.builder().status(((RenderStatusChanged) event).status()).build());
 		});
 
+		//TODO move to application handler
 		eventBus.subscribe(RenderErrorChanged.class.getSimpleName(), event -> {
-			eventBus.postEvent(SessionErrorChanged.builder().error(((RenderErrorChanged) event[0]).error()).build());
+			eventBus.postEvent(SessionErrorChanged.builder().error(((RenderErrorChanged) event).error()).build());
 		});
 
 		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> dispose());
 
-		eventBus.subscribe(TimeAnimationActionFired.class.getSimpleName(), event -> handleTimeAnimationAction(eventBus, ((TimeAnimationActionFired)event[0]).action()));
+		//TODO move to application handler
+		eventBus.subscribe(TimeAnimationActionFired.class.getSimpleName(), event -> handleTimeAnimationAction(eventBus, ((TimeAnimationActionFired)event).action()));
 
-		Platform.runLater(() -> controls.requestFocus());
+		Platform.runLater(controls::requestFocus);
 	}
 
+	private ToolContext<MandelbrotMetadata> getToolContext(PlatformEventBus eventBus, int width, int height) {
+		return new ToolContext<>() {
+            public Number getInitialSize() {
+                return coordinators[0].getInitialSize();
+            }
+
+            public Number getInitialCenter() {
+                return coordinators[0].getInitialCenter();
+            }
+
+            public double getZoomSpeed() {
+                return zoomSpeed;
+            }
+
+            public RendererFactory getRendererFactory() {
+                return renderFactory;
+            }
+
+            @Override
+            public double getWidth() {
+                return width;
+            }
+
+            @Override
+            public double getHeight() {
+                return height;
+            }
+
+            @Override
+            public MandelbrotMetadata getMetadata() {
+                return (MandelbrotMetadata) mandelbrotSession.getMetadata();
+            }
+
+            @Override
+            public void setPoint(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
+                final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
+                eventBus.postEvent(RenderPointChanged.builder().session(newSession).continuous(continuous).appendToHistory(appendHistory).build());
+            }
+
+            @Override
+            public void setView(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
+                final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
+                eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(continuous).appendToHistory(appendHistory).build());
+            }
+
+            @Override
+            public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
+                final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
+                eventBus.postEvent(RenderTimeChanged.builder().session(newSession).continuous(continuous).appendToHistory(appendHistory).build());
+            }
+        };
+	}
+
+	//TODO move to application handler
 	private void handleTimeAnimationAction(PlatformEventBus eventBus, String action) {
 		if ("start".equals(action)) startTimeAnimation(eventBus);
 		if ("stop".equals(action)) stopTimeAnimation(eventBus);
 	}
 
+	//TODO move to application handler
 	private void startTimeAnimation(PlatformEventBus eventBus) {
-		eventBus.postEvent(HistorySessionAdded.builder().session(mandelbrotSession).build());
+//		eventBus.postEvent(SessionDataChanged.builder().session(mandelbrotSession).continuous(false).appendToHistory(true).build());
 	}
 
+	//TODO move to application handler
 	private void stopTimeAnimation(PlatformEventBus eventBus) {
-		eventBus.postEvent(HistorySessionAdded.builder().session(mandelbrotSession).build());
+		eventBus.postEvent(SessionDataChanged.builder().session(mandelbrotSession).continuous(false).appendToHistory(true).build());
 	}
 
 //	private void updateTime(EventBus eventBus, double seconds) {
@@ -739,22 +763,24 @@ public class RenderPane extends BorderPane {
 		return new MandelbrotOptions(showPreview, showTrap, showOrbit, showOrbit || showPreview, previewOrigin, previewSize);
 	}
 
-	private void notifySessionChanged(PlatformEventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
-        eventBus.postEvent(SessionDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(timeAnimation).build());
-		if (historyAppend) {
-			eventBus.postEvent(HistorySessionAdded.builder().session(newSession).build());
-		}
+	private void notifySessionChanged(PlatformEventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean historyAppend) {
+        eventBus.postEvent(SessionDataChanged.builder().session(newSession).continuous(continuous).appendToHistory(historyAppend).build());
+//		if (historyAppend) {
+//			eventBus.postEvent(HistorySessionAdded.builder().session(newSession).build());
+//		}
     }
 
-	private ParserResult generateReport(String text) throws Exception {
+	//TODO replace with report generated by editor
+	private DSLParserResult generateReport(String text) throws Exception {
 		return new DSLParser(DSLParser.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).parse(text);
 	}
 
-	private void loadData(MandelbrotSession session, boolean continuous, boolean timedAnimation) {
-        Try.of(() -> generateReport(session.getScript())).filter(report -> ((ParserResult) report).getErrors().isEmpty()).ifPresent(report -> {
+	private void loadData(MandelbrotSession session, boolean continuous) {
+		//TODO no need for report during playback
+        Try.of(() -> generateReport(session.getScript())).filter(report -> ((DSLParserResult) report).getErrors().isEmpty()).ifPresent(report -> {
 			List<SourceError> errors = updateReport(report);
 			if (errors.isEmpty()) {
-				updateData(session, continuous, timedAnimation);
+				updateData(session, continuous);
 			}
 		});
 	}
@@ -782,9 +808,9 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void updateData(MandelbrotSession session, Boolean continuous, Boolean timeAnimation) {
+	private void updateData(MandelbrotSession session, Boolean continuous) {
 		mandelbrotSession = session;
-        updateSession(session, continuous, timeAnimation);
+        updateSession(session, continuous, timeProperty.getValue());
 	}
 
 	private void restoreView(MandelbrotSession mandelbrotSession) {
@@ -832,8 +858,14 @@ public class RenderPane extends BorderPane {
 		double[] scale = {1, 1, 1, 1};
 		MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, metadata.getPoint().toArray(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 		final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-		eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+		eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 	}
+
+
+
+
+
+
 
 	//TODO move to strategy class
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
@@ -888,7 +920,7 @@ public class RenderPane extends BorderPane {
 			public void handle(long nanos) {
 				long nowInMillis = nanos / 1000000;
 				if (nowInMillis - lastInMillis > FRAME_LENGTH_IN_MILLIS) {
-					if (!playback && !hasError && coordinators[0] != null && coordinators[0].isInitialized()) {
+					if (!hasError && coordinators[0] != null && coordinators[0].isInitialized()) {
 						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
 						redrawIfJuliaPixelsChanged(juliaCanvas);
@@ -896,7 +928,7 @@ public class RenderPane extends BorderPane {
 						redrawIfOrbitChanged(orbitCanvas);
 						redrawIfTrapChanged(trapCanvas);
 						redrawIfToolChanged(toolCanvas);
-						if (currentTool != null) {
+						if (!playback && currentTool != null) {
 							currentTool.update(nowInMillis, timeAnimation);
 						}
 					}
@@ -915,20 +947,16 @@ public class RenderPane extends BorderPane {
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
 		RendererSize tileBorder = new RendererSize(0, 0);
 		RendererPoint tileOffset = new RendererPoint(Math.round(((float)column * (float)width) / (float)columns), Math.round(((float)row * (float)height) / (float)rows));
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
+        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 	}
 
 	//TODO move to utility class
 	private RendererTile createSingleTile(int width, int height) {
-		int tileWidth = width;
-		int tileHeight = height;
-		RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+        RendererSize imageSize = new RendererSize(width, height);
+		RendererSize tileSize = new RendererSize(width, height);
 		RendererSize tileBorder = new RendererSize(0, 0);
 		RendererPoint tileOffset = new RendererPoint(0, 0);
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
+        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 	}
 
 	private void setFractalJulia(PlatformEventBus eventBus, boolean julia) {
@@ -936,16 +964,16 @@ public class RenderPane extends BorderPane {
 		if (!julia && metadata.isJulia()) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 		} else if (julia && !metadata.isJulia()) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).appendToHistory(true).build());
 		}
 	}
 
 	//TODO move to strategy class
-	private List<SourceError> updateReport(ParserResult report) {
+	private List<SourceError> updateReport(DSLParserResult report) {
 		try {
 			updateCompilerErrors(null, null, null);
 			boolean[] changed = createOrbitAndColor(report);
@@ -1051,28 +1079,28 @@ public class RenderPane extends BorderPane {
 			}
 		} catch (CompilerException e) {
 			if (logger.isLoggable(Level.FINE)) {
-				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+				logger.log(Level.FINE, "Can't render fractal: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 			return e.getErrors();
 		} catch (ParserException e) {
 			if (logger.isLoggable(Level.FINE)) {
-				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+				logger.log(Level.FINE, "Can't render fractal: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
 			return e.getErrors();
 		} catch (Exception e) {
 			if (logger.isLoggable(Level.FINE)) {
-				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+				logger.log(Level.FINE, "Can't render fractal: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), null, null);
-			return Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Cannot render image"));
+			return Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Can't render image"));
 		}
 		return Collections.emptyList();
 	}
 
 	//TODO move to strategy class
-	private boolean[] createOrbitAndColor(ParserResult result) throws ParserException, CompilerException, ClassNotFoundException, IOException {
+	private boolean[] createOrbitAndColor(DSLParserResult result) throws ParserException, CompilerException, ClassNotFoundException, IOException {
 		if (result.getErrors().size() > 0) {
 			this.astOrbit = null;
 			this.astColor = null;
@@ -1238,9 +1266,9 @@ public class RenderPane extends BorderPane {
 				view.setJulia(julia);
 				view.setPoint(new Number(point.getX(), point.getY()));
 				coordinator.setView(view);
-				if (timeAnimation) {
+//				if (timeAnimation) {
 					coordinator.setTime(time);
-				}
+//				}
 			}
 		}
 		startCoordinators();
@@ -1255,9 +1283,9 @@ public class RenderPane extends BorderPane {
 			view.setJulia(true);
 			view.setPoint(new Number(point.getX(), point.getY()));
 			juliaCoordinator.setView(view);
-			if (timeAnimation) {
+//			if (timeAnimation) {
 				juliaCoordinator.setTime(time);
-			}
+//			}
 			juliaCoordinator.run();
 		}
 		states = renderOrbit(time, point);
@@ -1355,31 +1383,30 @@ public class RenderPane extends BorderPane {
 
 	//TODO move to strategy class
 	private void abortCoordinators() {
-		visitCoordinators(coordinator -> true, coordinator -> coordinator.abort());
+		visitCoordinators(coordinator -> true, RendererCoordinator::abort);
 	}
 
 	//TODO move to strategy class
 	private void joinCoordinators() {
-		visitCoordinators(coordinator -> true, coordinator -> coordinator.waitFor());
+		visitCoordinators(coordinator -> true, RendererCoordinator::waitFor);
 	}
 
 	//TODO move to strategy class
 	private void startCoordinators() {
-		visitCoordinators(coordinator -> true, coordinator -> coordinator.run());
+		visitCoordinators(coordinator -> true, RendererCoordinator::run);
 	}
 
 	//TODO move to strategy class
 	private void redrawIfPixelsChanged(Canvas canvas) {
 		RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-		visitCoordinators(coordinator -> coordinator.isPixelsChanged(), coordinator -> coordinator.drawImage(gc, 0, 0));
+		visitCoordinators(RendererCoordinator::isPixelsChanged, coordinator -> coordinator.drawImage(gc, 0, 0));
 	}
 
+	//TODO move to strategy class
 	private void visitCoordinators(Predicate<RendererCoordinator> predicate, Consumer<RendererCoordinator> consumer) {
-		for (int i = 0; i < coordinators.length; i++) {
-			if (coordinators[i] != null && predicate.test(coordinators[i])) {
-				consumer.accept(coordinators[i]);
-			}
-		}
+        Arrays.stream(coordinators)
+				.filter(coordinator -> coordinator != null && predicate.test(coordinator))
+				.forEach(consumer);
 	}
 
 	//TODO move to strategy class
@@ -1512,7 +1539,7 @@ public class RenderPane extends BorderPane {
 				List<Trap> traps = coordinators[0].getTraps();
 				for (Trap trap : traps) {
 					List<Number> points = trap.toPoints();
-					if (points.size() > 0) {
+					if (!points.isEmpty()) {
 						double zx = points.get(0).r();
 						double zy = points.get(0).i();
 						double cx = dw / 2;

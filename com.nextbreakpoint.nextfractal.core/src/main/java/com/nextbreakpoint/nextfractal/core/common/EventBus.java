@@ -33,38 +33,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class EventBus {
-    private static Logger logger = Logger.getLogger(EventBus.class.getName());
-    private Map<String, EventValidator> validators = new HashMap<>();
-    private Map<String, List<EventListener>> listeners = new HashMap<>();
-    private List<EventBus> children = new LinkedList<>();
-    private EventBus parent;
-    private String name;
+    private static final Logger logger = Logger.getLogger(EventBus.class.getName());
+    private final Map<String, List<EventListener>> listeners = new HashMap<>();
+    private final List<EventBus> children = new LinkedList<>();
+    private final EventBus parent;
+    private final String name;
     private volatile boolean disabled;
 
     public EventBus(String name) {
         this(name, null);
     }
 
+    //TODO remove support for parent bus
     public EventBus(String name, EventBus parent) {
         this.name = name;
         this.parent = parent;
         if (parent != null) {
             parent.children.add(this);
         }
-    }
-
-    public final void register(String channel, EventValidator validator) {
-        if (validators.containsKey(channel)) {
-            throw new RuntimeException("Channel " + channel + " already exists");
-        }
-        validators.put(channel, validator);
-    }
-
-    public final void unregister(String channel) {
-        if (!validators.containsKey(channel)) {
-            throw new RuntimeException("Channel not found " + channel);
-        }
-        validators.remove(channel);
     }
 
     public final void subscribe(String channel, EventListener listener) {
@@ -80,51 +66,35 @@ public abstract class EventBus {
         List<EventListener> listeners = this.listeners.get(channel);
         if (listeners != null) {
             listeners.remove(listener);
-            if (listeners.size() == 0) {
+            if (listeners.isEmpty()) {
                 this.listeners.remove(channel);
             }
         }
     }
 
-    public abstract void oldPostEvent(String channel, Object... event);
-
     public abstract void postEvent(Object event);
 
-    protected final void processEvent(String channel, Exception error, Object... event) {
-        logger.log(Level.FINE, "Dispatch event to bus: " + name + ", channel: " + channel);
+    protected final void processEvent(String channel, Object event) {
         try {
+            logger.log(Level.FINE, "Event posted on bus: " + name + ", channel: " + channel + ": " + event.toString());
             if (parent != null) {
-                parent.processEvent(channel, error, event);
+                parent.processEvent(channel, event);
             } else {
-                dispatchEvent(channel, error, event);
+                dispatchEvent(channel, event);
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error while propagating event", e);
-            logger.log(Level.WARNING, "The event was posted here", error);
         }
     }
 
-    private void dispatchEvent(String channel, Exception error, Object... event) {
+    private void dispatchEvent(String channel, Object event) {
         if (disabled) return;
-        logger.log(Level.FINE, "Dispatch event to bus: " + name + ", channel: " + channel);
-        final EventValidator validator = validators.get(channel);
-        if (validator != null) {
-            if (validator.validate(event)) {
-                List<EventListener> listeners = this.listeners.get(channel);
-                if (listeners != null) {
-                    listeners.forEach(listener -> listener.eventPosted(event));
-                }
-            } else {
-                logger.log(Level.WARNING, "Event parameters not valid");
-            }
-        } else {
-            // TODO remove this when validators have been implemented
-            List<EventListener> listeners = this.listeners.get(channel);
-            if (listeners != null) {
-                listeners.forEach(listener -> listener.eventPosted(event));
-            }
+        logger.log(Level.FINE, "Event dispatched to bus: " + name + ", channel: " + channel);
+        List<EventListener> listeners = this.listeners.get(channel);
+        if (listeners != null) {
+            listeners.forEach(listener -> listener.onEvent(event));
         }
-        children.forEach(child -> child.dispatchEvent(channel, error, event));
+        children.forEach(child -> child.dispatchEvent(channel, event));
     }
 
     public final void disable() {

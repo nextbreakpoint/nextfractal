@@ -24,12 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  * @author Andrea Medeghini
  */
+@Builder(setterPrefix = "with", toBuilder = true)
 public class Integer4D implements Serializable, Cloneable {
 	private final int x;
 	private final int y;

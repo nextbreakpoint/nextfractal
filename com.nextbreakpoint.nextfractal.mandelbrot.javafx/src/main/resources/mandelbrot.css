@@ -1,39 +1,34 @@
-.mandelbrot .keyword {
+.mandelbrot-keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
 }
 
-.mandelbrot .error {
+.mandelbrot-error {
     -fx-fill: red;
     -fx-font-weight: bold;
 }
 
-.mandelbrot .pathop {
+.mandelbrot-pathop {
     -fx-fill: orange;
     -fx-font-weight: bold;
 }
 
-.mandelbrot .operator {
+.mandelbrot-operator {
     -fx-fill: green;
     -fx-font-weight: bold;
 }
 
-.mandelbrot .paren {
+.mandelbrot-paren {
     -fx-fill: purple;
     -fx-font-weight: bold;
 }
 
-.mandelbrot .function {
+.mandelbrot-function {
     -fx-fill: brown;
     -fx-font-weight: bold;
 }
 
-.mandelbrot .brace {
+.mandelbrot-brace {
     -fx-fill: black;
-    -fx-font-weight: bold;
-}
-
-.mandelbrot .code {
-    -fx-fill: #808080;
     -fx-font-weight: bold;
 }

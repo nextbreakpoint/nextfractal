@@ -24,12 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  * @author Andrea Medeghini
  */
+@Builder(setterPrefix = "with", toBuilder = true)
 public class Double2D implements Serializable, Cloneable {
 	private final double x;
 	private final double y;

@@ -22,25 +22,11 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
+package com.nextbreakpoint.nextfractal.core.common;
 
-import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
-import javafx.scene.input.MouseEvent;
+import com.nextbreakpoint.nextfractal.core.editor.GenericStyleSpans;
 
-public interface Tool {
-	public void clicked(MouseEvent e);
+import java.util.Collection;
+import java.util.List;
 
-	public void moved(MouseEvent e);
-
-	public void dragged(MouseEvent e);
-
-	public void released(MouseEvent e);
-
-	public void pressed(MouseEvent e);
-
-	public void update(long time, boolean timeAnimation);
-
-	public boolean isChanged();
-
-	public void draw(RendererGraphicsContext gc);
-}
+public record ParserResult(Session session, List<SourceError> errors, GenericStyleSpans<Collection<String>> highlighting, Object result) {}

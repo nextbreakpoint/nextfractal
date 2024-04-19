@@ -125,7 +125,7 @@ public class ContextFreeFileManager extends FileManager {
     }
 
     public Try<String, Exception> loadFromStream(InputStream stream) {
-        return Try.of(() -> readAll(stream)).mapper(e -> new Exception("Cannot load data from stream"));
+        return Try.of(() -> readAll(stream)).mapper(e -> new Exception("Can't load data from stream"));
     }
 
     private String readAll(InputStream stream) throws IOException {

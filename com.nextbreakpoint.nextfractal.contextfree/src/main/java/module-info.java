@@ -26,6 +26,7 @@ import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeFactory;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 
 module com.nextbreakpoint.nextfractal.contextfree {
+    requires static lombok;
     requires java.logging;
     requires java.desktop;
     requires com.fasterxml.jackson.databind;

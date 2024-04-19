@@ -30,7 +30,7 @@ public class DSLCompiler {
 	public DSLCompiler() {
 	}
 	
-	public CFDGInterpreter compile(ParserResult report) {
+	public CFDGInterpreter compile(DSLParserResult report) {
 		return new CFDGInterpreter(report.getCFDG());
 	}
 }

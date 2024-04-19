@@ -25,8 +25,6 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.nextfractal.core.common.Clip;
-import com.nextbreakpoint.nextfractal.core.common.EventBus;
-import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipAdded;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipMoved;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipRemoved;
@@ -45,8 +43,6 @@ import com.nextbreakpoint.nextfractal.core.event.ExportSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionSuspended;
 import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
 import com.nextbreakpoint.nextfractal.core.event.HistorySessionSelected;
-import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
-import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
@@ -58,10 +54,18 @@ import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.event.ToggleBrowserRequested;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
-import com.nextbreakpoint.nextfractal.core.javafx.*;
-import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.javafx.ExportDelegate;
+import com.nextbreakpoint.nextfractal.core.javafx.ExportPane;
+import com.nextbreakpoint.nextfractal.core.javafx.HistoryPane;
+import com.nextbreakpoint.nextfractal.core.javafx.JobsDelegate;
+import com.nextbreakpoint.nextfractal.core.javafx.JobsPane;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.StatusPane;
+import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
+import com.nextbreakpoint.nextfractal.core.javafx.editor.ScriptEditor;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.runtime.javafx.utils.TileUtils;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -77,46 +81,24 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
+import lombok.extern.java.Log;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.javafx.Icons.createIconImage;
 
+@Log
 public class MainSidePane extends BorderPane {
-    private static Logger logger = Logger.getLogger(MainSidePane.class.getName());
-
-    // TODO is it required?
-    private Session session;
-
     public MainSidePane(PlatformEventBus eventBus) {
         setCenter(createRootPane(eventBus));
-
-        //TODO move to coordinator class
-        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> session = ((SessionDataChanged) event[0]).session());
-
-        //TODO move to coordinator class
-        eventBus.subscribe(HistorySessionSelected.class.getSimpleName(), event -> notifyHistoryItemSelected(eventBus, ((HistorySessionSelected) event[0]).session()));
-
-        //TODO move to coordinator class
-        eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> session = ((PlaybackDataLoaded) event[0]).session());
-
-        //TODO move to coordinator class
-        eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> session = ((PlaybackDataChanged) event[0]).session());
-
-        eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> handlePlaybackClipsStart(eventBus, this));
-
-        eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> handlePlaybackClipsStop(eventBus, this));
     }
 
     private Pane createRootPane(PlatformEventBus eventBus) {
         final RendererTile tile = createRendererTile();
 
         final StringObservableValue errorProperty = new StringObservableValue();
-        // TODO is it required?
-        errorProperty.setValue(null);
 
-        final MainEditorPane editorPane = new MainEditorPane(eventBus);
+        final ScriptEditor editorPane = new ScriptEditor(eventBus);
 
         final MainParamsPane paramsPane = new MainParamsPane(eventBus);
 
@@ -243,6 +225,7 @@ public class MainSidePane extends BorderPane {
         });
 
         errorProperty.addListener((source, oldValue, newValue) -> {
+            storeButton.setDisable(newValue != null);
             saveButton.setDisable(newValue != null);
             exportPane.setDisable(newValue != null);
             paramsPane.setParamsDisable(newValue != null);
@@ -297,12 +280,14 @@ public class MainSidePane extends BorderPane {
         });
 
         sidebarPane.translateXProperty().addListener((source, oldValue, newValue) -> {
-            editorPane.prefWidthProperty().setValue(rootPane.getWidth() + newValue.doubleValue());
+            final double width = rootPane.getWidth() + newValue.doubleValue();
+            editorPane.prefWidthProperty().setValue(width);
         });
 
         statusPane.translateYProperty().addListener((source, oldValue, newValue) -> {
-            editorPane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
-            sidebarPane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
+            final double height = rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue();
+            editorPane.prefHeightProperty().setValue(height);
+            sidebarPane.prefHeightProperty().setValue(height);
         });
 
         exportPane.setExportDelegate(new ExportDelegate() {
@@ -374,69 +359,69 @@ public class MainSidePane extends BorderPane {
 
         historyPane.setDelegate(session -> eventBus.postEvent(HistorySessionSelected.builder().session(session).build()));
 
-        eventBus.subscribe(SessionStatusChanged.class.getSimpleName(), event -> statusPane.setMessage(((SessionStatusChanged) event[0]).status()));
+        eventBus.subscribe(SessionStatusChanged.class.getSimpleName(), event -> statusPane.setMessage(((SessionStatusChanged) event).status()));
 
-        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> errorProperty.setValue(((SessionErrorChanged) event[0]).error()));
+        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> errorProperty.setValue(((SessionErrorChanged) event).error()));
 
-        eventBus.subscribe(HistorySessionAdded.class.getSimpleName(), event -> historyPane.appendSession(((HistorySessionAdded) event[0]).session()));
+        eventBus.subscribe(HistorySessionAdded.class.getSimpleName(), event -> historyPane.appendSession(((HistorySessionAdded) event).session()));
 
         eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> jobsButton.setSelected(true));
-        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> jobsPane.appendSession(((ExportSessionCreated) event[0]).session()));
+        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> jobsPane.appendSession(((ExportSessionCreated) event).session()));
 
-        eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> handleSessionStarted(exportPane, exportButton, ((CaptureSessionStarted) event[0]).clip()));
+        eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> handleSessionStarted(exportPane, exportButton, ((CaptureSessionStarted) event).clip()));
 
-        eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> handleSessionStopped(exportPane, exportButton, ((CaptureSessionStopped) event[0]).clip()));
+        eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> handleSessionStopped(exportPane, exportButton, ((CaptureSessionStopped) event).clip()));
 
-        eventBus.subscribe(CaptureClipsLoaded.class.getSimpleName(), event -> exportPane.loadClips(((CaptureClipsLoaded) event[0]).clips()));
+        eventBus.subscribe(CaptureClipsLoaded.class.getSimpleName(), event -> exportPane.loadClips(((CaptureClipsLoaded) event).clips()));
 
-        eventBus.subscribe(CaptureClipsMerged.class.getSimpleName(), event -> exportPane.mergeClips(((CaptureClipsMerged) event[0]).clips()));
+        eventBus.subscribe(CaptureClipsMerged.class.getSimpleName(), event -> exportPane.mergeClips(((CaptureClipsMerged) event).clips()));
 
-        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> handleDataChanged(eventBus, errorProperty, ((SessionDataChanged) event[0]).session(), ((SessionDataChanged) event[0]).continuous()));
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> errorProperty.setValue(null));
 
         eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> jobsPane.dispose());
-
         eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> historyPane.dispose());
 
-        eventBus.subscribe(ExportSessionStateChanged.class.getSimpleName(), event -> handleExportSessionStateChanged(jobsPane, ((ExportSessionStateChanged) event[0]).session(), ((ExportSessionStateChanged) event[0]).state(), ((ExportSessionStateChanged) event[0]).progress()));
+        eventBus.subscribe(ExportSessionStateChanged.class.getSimpleName(), event -> handleExportSessionStateChanged(jobsPane, ((ExportSessionStateChanged) event).session(), ((ExportSessionStateChanged) event).state(), ((ExportSessionStateChanged) event).progress()));
 
         eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> exportPane.setCaptureSelected(true));
 
         eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> exportPane.setCaptureSelected(false));
 
+        eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> handlePlaybackClipsStart(rootPane));
+
+        eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> handlePlaybackClipsStop(rootPane));
+
+        eventBus.subscribe(HistorySessionSelected.class.getSimpleName(), event -> handleHistorySessionSelected(eventBus, (HistorySessionSelected) event));
+
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> handleSessionDataChanged(eventBus, (SessionDataChanged) event));
+
         return rootPane;
     }
 
-    private void handlePlaybackClipsStart(PlatformEventBus eventBus, Pane rootPane) {
-//        eventBus.disable();
+    private void handleSessionDataChanged(PlatformEventBus eventBus, SessionDataChanged event) {
+        if (!event.continuous()) {
+            eventBus.postEvent(EditorParamsChanged.builder().session(event.session()).build());
+        }
+    }
+
+    private static void handleHistorySessionSelected(PlatformEventBus eventBus, HistorySessionSelected event) {
+        eventBus.postEvent(SessionDataLoaded.builder().session(event.session()).continuous(false).appendToHistory(false).build());
+    }
+
+    private void handlePlaybackClipsStart(Pane rootPane) {
         rootPane.setDisable(true);
         BoxBlur effect = new BoxBlur();
         effect.setIterations(1);
         rootPane.setEffect(effect);
     }
 
-    private void handlePlaybackClipsStop(PlatformEventBus eventBus, Pane rootPane) {
+    private void handlePlaybackClipsStop(Pane rootPane) {
         rootPane.setEffect(null);
-//        eventBus.enable();
         rootPane.setDisable(false);
-        //TODO move to coordinator class
-        eventBus.postEvent(SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
-    }
-
-    private void notifyHistoryItemSelected(EventBus eventBus, Session session) {
-        //TODO move to coordinator class
-        eventBus.postEvent(SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
-    }
-
-    private void handleDataChanged(EventBus eventBus, StringObservableValue errorProperty, Session session, boolean continuous) {
-        errorProperty.setValue(null);
-        //TODO move to coordinator class
-        if (!continuous) {
-            eventBus.postEvent(EditorParamsChanged.builder().session(session).build());
-        }
     }
 
     private void handleExportSessionStateChanged(JobsPane jobsPane, ExportSession exportSession, ExportState state, Float progress) {
-        logger.info("Session " + exportSession.getSessionId() + " state " + state.name());
+        log.info("Session " + exportSession.getSessionId() + " state " + state.name());
         if (state == ExportState.FINISHED) {
             jobsPane.removeSession(exportSession);
         } else {
@@ -445,9 +430,11 @@ public class MainSidePane extends BorderPane {
     }
 
     private void handleSessionStarted(ExportPane exportPane, ToggleButton exportButton, Clip clip) {
+        log.info("Session started");
     }
 
     private void handleSessionStopped(ExportPane exportPane, ToggleButton exportButton, Clip clip) {
+        log.info("Session stopped: clip duration " + clip.duration() + "ms");
         if (!clip.isEmpty()) exportPane.appendClip(clip);
         exportButton.setSelected(true);
     }
@@ -499,47 +486,27 @@ public class MainSidePane extends BorderPane {
         }
     }
 
-    private static void showPanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-        transition.stop();
-        if (transition.getNode().getTranslateX() != -((Pane) transition.getNode()).getWidth()) {
-            transition.setFromX(transition.getNode().getTranslateX());
-            transition.setToX(-((Pane) transition.getNode()).getWidth());
-            transition.setOnFinished(handler);
-            transition.play();
-        }
-    }
+//    private static void showPanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+//        transition.stop();
+//        if (transition.getNode().getTranslateX() != -((Pane) transition.getNode()).getWidth()) {
+//            transition.setFromX(transition.getNode().getTranslateX());
+//            transition.setToX(-((Pane) transition.getNode()).getWidth());
+//            transition.setOnFinished(handler);
+//            transition.play();
+//        }
+//    }
+//
+//    private static void hidePanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+//        transition.stop();
+//        if (transition.getNode().getTranslateX() != 0) {
+//            transition.setFromX(transition.getNode().getTranslateX());
+//            transition.setToX(0);
+//            transition.setOnFinished(handler);
+//            transition.play();
+//        }
+//    }
 
-    private static void hidePanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-        transition.stop();
-        if (transition.getNode().getTranslateX() != 0) {
-            transition.setFromX(transition.getNode().getTranslateX());
-            transition.setToX(0);
-            transition.setOnFinished(handler);
-            transition.play();
-        }
-    }
-
-    //TODO move to utility class
-    private static int computeSize(double percentage) {
-        return (int) Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
-    }
-
-    //TODO move to utility class
-    private static RendererTile createRendererTile(int width, int height) {
-        RendererSize imageSize = new RendererSize(width, height);
-        RendererSize tileSize = new RendererSize(width, height);
-        RendererSize tileBorder = new RendererSize(0, 0);
-        RendererPoint tileOffset = new RendererPoint(0, 0);
-        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-    }
-
-    //TODO move to utility class
-    private static RendererTile createRendererTile(int size) {
-        return createRendererTile(size, size);
-    }
-
-    //TODO move to utility class
     private static RendererTile createRendererTile() {
-        return createRendererTile(computeSize(0.05));
+        return TileUtils.createRendererTile(Screen.getPrimary().getVisualBounds().getWidth());
     }
 }

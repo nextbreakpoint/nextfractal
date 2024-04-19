@@ -39,7 +39,7 @@ public class DSLCompiler {
 	public DSLCompiler() {
 	}
 	
-	public ClassFactory<Orbit> compileOrbit(ParserResult result) throws CompilerException {
+	public ClassFactory<Orbit> compileOrbit(DSLParserResult result) throws CompilerException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
 			return new InterpreterDSLCompiler().compileOrbit(result);
@@ -48,7 +48,7 @@ public class DSLCompiler {
 		}
 	}
 
-	public ClassFactory<Color> compileColor(ParserResult result) throws CompilerException {
+	public ClassFactory<Color> compileColor(DSLParserResult result) throws CompilerException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
 			return new InterpreterDSLCompiler().compileColor(result);

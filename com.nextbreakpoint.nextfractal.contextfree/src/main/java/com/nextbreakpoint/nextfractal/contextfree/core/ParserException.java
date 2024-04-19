@@ -25,12 +25,16 @@
 package com.nextbreakpoint.nextfractal.contextfree.core;
 
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
+import lombok.ToString;
 
+import java.io.Serial;
 import java.util.List;
 
+@ToString
 public class ParserException extends Exception {
+	@Serial
 	private static final long serialVersionUID = 1L;
-	private List<SourceError> errors;
+	private final List<SourceError> errors;
 
 	public ParserException(String message, List<SourceError> errors) {
 		super(message);

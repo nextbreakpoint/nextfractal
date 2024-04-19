@@ -31,11 +31,15 @@ import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Builder(setterPrefix = "with", toBuilder = true)
+@AllArgsConstructor
 public class MandelbrotSession extends Session {
 	private static final Logger logger = Logger.getLogger(MandelbrotSession.class.getName());
 
@@ -74,8 +78,8 @@ public class MandelbrotSession extends Session {
 	}
 
 	private static String getInitialScript() {
-		return Try.of(() -> SessionUtils.readAll(MandelbrotSession.class.getResourceAsStream("/mandelbrot.txt")))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot load resource /mandelbrot.txt"))
+		return Try.of(() -> SessionUtils.readAll(Objects.requireNonNull(MandelbrotSession.class.getResourceAsStream("/mandelbrot.txt"))))
+				.onFailure(e -> logger.log(Level.WARNING, "Can't load resource /mandelbrot.txt"))
 				.orElse("");
 	}
 

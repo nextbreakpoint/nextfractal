@@ -11,6 +11,8 @@
     <properties>
         <modules.path>${project.build.directory}/mods/${os.type}/${arch.type}</modules.path>
         <libraries.path>${project.build.directory}/libs/${os.type}/${arch.type}</libraries.path>
+        <ffmpeg4java.version>3.1.1-1.1</ffmpeg4java.version>
+        <freeimage4java.version>3.18.0-1.2</freeimage4java.version>
     </properties>
     <build>
         <plugins>
@@ -43,6 +45,7 @@
                                     <groupId>com.nextbreakpoint</groupId>
                                     <artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>
                                     <classifier>${build.type}</classifier>
+                                    <version>${ffmpeg4java.version}</version>
                                     <type>jar</type>
                                     <includes>**/*.jnilib,**/*.dll,**/*.so</includes>
 <!--                                    <includes>${os.name}/*.jnilib</includes>-->
@@ -56,6 +59,7 @@
                                     <groupId>com.nextbreakpoint</groupId>
                                     <artifactId>com.nextbreakpoint.freeimage4java</artifactId>
                                     <classifier>${build.type}</classifier>
+                                    <version>${freeimage4java.version}</version>
                                     <type>jar</type>
                                     <includes>**/*.jnilib,**/*.dll,**/*.so</includes>
 <!--                                    <includes>${os.name}/*.jnilib</includes>-->

@@ -239,7 +239,7 @@ public class ASTCompiledPath {
 
 						Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
 						if (arc == null) {
-							driver.fail("Cannot create arc", pathOp.getLocation());
+							driver.fail("Can't create arc", pathOp.getLocation());
 						}
 						AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(angle), arc.getCenterX(), arc.getCenterY());
 						t.concatenate(transform);
@@ -248,7 +248,7 @@ public class ASTCompiledPath {
 						transform.transform(p0, p0);
 						pathStorage.append(s, p0);
 					} catch (NoninvertibleTransformException e) {
-						driver.fail("Cannot invert transform", pathOp.getLocation());
+						driver.fail("Can't invert transform", pathOp.getLocation());
 					}
 				} else {
 					Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);

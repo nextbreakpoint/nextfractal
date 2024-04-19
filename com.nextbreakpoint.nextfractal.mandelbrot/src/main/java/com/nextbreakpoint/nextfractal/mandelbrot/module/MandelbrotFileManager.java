@@ -128,7 +128,7 @@ public class MandelbrotFileManager extends FileManager {
 //                encodedData = URLEncoder.encode(encodedData, "UTF-8");
 //                logger.info("Update encoded data");
 //            } catch (Exception e) {
-//                logger.log(Level.FINE, "Cannot encode data", e);
+//                logger.log(Level.FINE, "Can't encode data", e);
 //            }
 //        }
 //    }

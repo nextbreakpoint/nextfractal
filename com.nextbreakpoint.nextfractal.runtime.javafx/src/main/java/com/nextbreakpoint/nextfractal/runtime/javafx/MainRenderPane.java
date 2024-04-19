@@ -24,47 +24,43 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
-import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
+import com.nextbreakpoint.nextfractal.runtime.javafx.utils.ApplicationUtils;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import lombok.extern.java.Log;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactory;
-
+@Log
 public class MainRenderPane extends BorderPane {
-    private static Logger logger = Logger.getLogger(MainRenderPane.class.getName());
-
-    private Map<String, PlatformEventBus> buses = new HashMap<>();
-    private Map<String, Pane> panels = new HashMap<>();
+    private final Map<String, PlatformEventBus> buses = new HashMap<>();
+    private final Map<String, Pane> panels = new HashMap<>();
 
     private Session session;
 
     public MainRenderPane(PlatformEventBus eventBus, int width, int height) {
-        final BiFunction<PlatformEventBus, Session, Pane> factory = (innerBus, session) -> createRootPane(innerBus, session, width, height);
+        final BiFunction<PlatformEventBus, Session, Pane> createRootPane = (innerBus, session) -> createRootPane(innerBus, session, width, height);
 
-        eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((SessionDataLoaded) event[0]).session(), ((SessionDataLoaded) event[0]).continuous(), ((SessionDataLoaded) event[0]).timeAnimation(), factory, this::setCenter));
+        eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((SessionDataLoaded) event).session(), createRootPane, this::setCenter));
 
-        eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((PlaybackDataLoaded) event[0]).session(), ((PlaybackDataLoaded) event[0]).continuous(), ((PlaybackDataLoaded) event[0]).timeAnimation(), factory, this::setCenter));
+        eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((PlaybackDataLoaded) event).session(), createRootPane, this::setCenter));
 
         eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> buses.clear());
         eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> panels.clear());
     }
 
-    private void handleSessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean timeAnimation, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
+    private void handleSessionChanged(PlatformEventBus eventBus, Session session, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
         if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
             if (this.session != null) {
                 Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(EventBus::disable);
@@ -83,11 +79,8 @@ public class MainRenderPane extends BorderPane {
     }
 
     private Pane createRootPane(PlatformEventBus eventBus, Session session, int width, int height) {
-        return createRenderPane(session, eventBus, width, height).orElse(null);
-    }
-
-    private static Try<Pane, Exception> createRenderPane(Session session, PlatformEventBus eventBus, int width, int height) {
-        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createRenderPane(eventBus, session, width, height)))
-            .onFailure(e -> logger.log(Level.WARNING, "Cannot create render panel with pluginId " + session.getPluginId(), e));
+        return ApplicationUtils.createRenderPane(eventBus, session, width, height)
+                .onFailure(e -> log.log(Level.WARNING, "Can't create render panel: plugin " + session.getPluginId(), e))
+                .orElse(null);
     }
 }

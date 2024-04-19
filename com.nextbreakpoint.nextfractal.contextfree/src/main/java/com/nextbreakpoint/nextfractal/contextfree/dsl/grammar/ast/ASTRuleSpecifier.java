@@ -326,7 +326,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 							locality = bound.getLocality();
 						}
 						if (arguments != null && arguments.getType() != ExpType.NoType) {
-							driver.error("Cannot bind parameters twice", arguments.getLocation());
+							driver.error("Can't bind parameters twice", arguments.getLocation());
 						}
 						return null;
 					}

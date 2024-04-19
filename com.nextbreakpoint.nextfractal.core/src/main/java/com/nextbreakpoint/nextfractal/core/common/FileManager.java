@@ -166,13 +166,13 @@ public abstract class FileManager {
     protected Try<List<List<Map<String, Object>>>, Exception> encodeClipsFailure(Try<List<Map<String, Object>>, Exception> result) {
         Exception[] error = new Exception[1];
         result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Cannot encode clips", error[0]));
+        return Try.failure(new Exception("Can't encode clips", error[0]));
     }
 
     protected Try<List<Map<String, Object>>, Exception> encodeClipFailure(Try<Map<String, Object>, Exception> result) {
         Exception[] error = new Exception[1];
         result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Cannot encode clip", error[0]));
+        return Try.failure(new Exception("Can't encode clip", error[0]));
     }
 
     private Map<String, Object> encodeEvent(Map<String, Object> lastMap, ClipEvent event) throws Exception {
@@ -230,13 +230,13 @@ public abstract class FileManager {
     private Try<List<Clip>, Exception> decodeClipsFailure(Try<Clip, Exception> result) {
         Exception[] error = new Exception[1];
         result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Cannot decode clips", error[0]));
+        return Try.failure(new Exception("Can't decode clips", error[0]));
     }
 
     private Try<Clip, Exception> decodeClipFailure(Try<ClipEvent, Exception> result) {
         Exception[] error = new Exception[1];
         result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Cannot decode clip", error[0]));
+        return Try.failure(new Exception("Can't decode clip", error[0]));
     }
 
     private ClipEvent decodeEvent(Map<String, Object> lastMap, Map<String, Object> eventMap) throws Exception {

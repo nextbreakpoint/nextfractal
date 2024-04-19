@@ -26,9 +26,11 @@ package com.nextbreakpoint.nextfractal.contextfree.module;
 
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import lombok.Builder;
 
 import java.util.Objects;
 
+@Builder(setterPrefix = "with", toBuilder = true)
 public class ContextFreeMetadata implements Metadata {
 	private final String seed;
 	private final Time time = new Time(0, 1);

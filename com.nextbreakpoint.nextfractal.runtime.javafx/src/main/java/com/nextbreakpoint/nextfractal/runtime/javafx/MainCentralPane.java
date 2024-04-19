@@ -24,8 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
-import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
@@ -37,13 +35,20 @@ import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
 import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.event.ToggleBrowserRequested;
-import com.nextbreakpoint.nextfractal.core.event.WorkspaceChanged;
-import com.nextbreakpoint.nextfractal.core.javafx.*;
+import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
+import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javafx.BrowseDelegate;
+import com.nextbreakpoint.nextfractal.core.javafx.BrowsePane;
+import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.PlaybackDelegate;
+import com.nextbreakpoint.nextfractal.core.javafx.PlaybackPane;
+import com.nextbreakpoint.nextfractal.core.javafx.RecordingPane;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
-import javafx.animation.FadeTransition;
+import com.nextbreakpoint.nextfractal.runtime.javafx.utils.ApplicationUtils;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -55,56 +60,26 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
-import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactory;
-
 public class MainCentralPane extends BorderPane {
-    public MainCentralPane(PlatformEventBus eventBus, int width, int height) {
+    public MainCentralPane(PlatformEventBus eventBus, int width, int height, File workspace, File examples) {
         final MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
 
-        final BooleanObservableValue toggleProperty = new BooleanObservableValue();
-        toggleProperty.setValue(false);
-
-        final BrowsePane browsePane = new BrowsePane(width, height);
+        final BrowsePane browsePane = new BrowsePane(width, height, workspace, examples);
         browsePane.setClip(new Rectangle(0, 0, width, height));
 
         final PlaybackPane playbackPane = new PlaybackPane();
         final RecordingPane recordingPane = new RecordingPane();
 
+        final BooleanObservableValue toggleProperty = new BooleanObservableValue();
+        toggleProperty.setValue(false);
+
         final TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
-        playbackPane.setDelegate(new PlaybackDelegate() {
-            @Override
-            public void playbackStopped() {
-                final var event = PlaybackStopped.builder().build();
-                eventBus.postEvent(event);
-            }
-
-            @Override
-            public void loadSessionData(Session session, boolean continuous, boolean timeAnimation) {
-                final var event = PlaybackDataLoaded.builder()
-                        .session(session)
-                        .continuous(continuous)
-                        .timeAnimation(timeAnimation)
-                        .build();
-                eventBus.postEvent(event);
-            }
-
-            @Override
-            public void updateSessionData(Session session, boolean continuous, boolean timeAnimation) {
-                final var event = PlaybackDataChanged.builder()
-                        .session(session)
-                        .continuous(continuous)
-                        .timeAnimation(timeAnimation)
-                        .build();
-                eventBus.postEvent(event);
-            }
-        });
-
-		browsePane.setDelegate(new BrowseDelegate() {
+        browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				eventBus.postEvent(EditorLoadFileRequested.builder().file(file).build());
                 eventBus.postEvent(ToggleBrowserRequested.builder().build());
+                eventBus.postEvent(EditorLoadFileRequested.builder().file(file).build());
 			}
 
             @Override
@@ -117,20 +92,43 @@ public class MainCentralPane extends BorderPane {
                 eventBus.postEvent(ToggleBrowserRequested.builder().build());
 			}
 
-			@Override
-			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
-                // TODO move to utility class
-				return tryFindFactory(((Session) bitmap.getProperty("session")).getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createRenderer(bitmap))).orThrow();
-			}
+            @Override
+            public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
+                return ApplicationUtils.createBitmap(file, size).orThrow();
+            }
 
 			@Override
-			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-                // TODO move to utility class
-				return FileManager.loadFile(file).flatMap(bundle -> tryFindFactory(bundle.getSession().getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createBitmap(bundle.getSession(), size)))).orThrow();
+			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+				return ApplicationUtils.createRenderer(bitmap).orThrow();
 			}
 		});
+
+        playbackPane.setDelegate(new PlaybackDelegate() {
+            @Override
+            public void playbackStopped() {
+                eventBus.postEvent(PlaybackStopped.builder().build());
+            }
+
+            @Override
+            public void loadSessionData(Session session, boolean continuous, boolean appendToHistory) {
+                final var event = PlaybackDataLoaded.builder()
+                        .session(session)
+                        .continuous(continuous)
+                        .appendToHistory(appendToHistory)
+                        .build();
+                eventBus.postEvent(event);
+            }
+
+            @Override
+            public void updateSessionData(Session session, boolean continuous, boolean appendToHistory) {
+                final var event = PlaybackDataChanged.builder()
+                        .session(session)
+                        .continuous(continuous)
+                        .appendToHistory(appendToHistory)
+                        .build();
+                eventBus.postEvent(event);
+            }
+        });
 
         final Pane stackPane = new Pane();
         stackPane.getChildren().add(renderPane);
@@ -161,8 +159,6 @@ public class MainCentralPane extends BorderPane {
             recordingPane.setPrefHeight(newValue.doubleValue());
         });
 
-        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> browsePane.dispose());
-
         toggleProperty.addListener((source, oldValue, newValue) -> {
             if (newValue) {
                 showBrowser(browserTransition, a -> {});
@@ -171,6 +167,8 @@ public class MainCentralPane extends BorderPane {
                 hideBrowser(browserTransition, a -> {});
             }
         });
+
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> browsePane.dispose());
 
         eventBus.subscribe(ToggleBrowserRequested.class.getSimpleName(), event -> {
             toggleProperty.setValue(!toggleProperty.getValue());
@@ -181,7 +179,7 @@ public class MainCentralPane extends BorderPane {
             renderPane.setDisable(true);
             toggleProperty.setValue(false);
             playbackPane.setVisible(true);
-            playbackPane.setClips(((PlaybackStarted)event[0]).clips());
+            playbackPane.setClips(((PlaybackStarted)event).clips());
             playbackPane.start();
         });
 
@@ -201,44 +199,35 @@ public class MainCentralPane extends BorderPane {
             recordingPane.setVisible(false);
             recordingPane.stop();
         });
-
-        Platform.runLater(() -> eventBus.postEvent(WorkspaceChanged.builder().file(browsePane.getCurrentSourceFolder()).build()));
     }
 
-    private void handleHideControls(FadeTransition transition, Boolean hide) {
-        if (hide) {
-            fadeOut(transition, x -> {});
-        } else {
-            fadeIn(transition, x -> {});
-        }
-    }
-
-    private FadeTransition createFadeTransition(Node node) {
-        FadeTransition transition = new FadeTransition();
-        transition.setNode(node);
-        transition.setDuration(Duration.seconds(0.5));
-        return transition;
-    }
-
-    private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
-        transition.stop();
-        if (transition.getNode().getOpacity() != 0) {
-            transition.setFromValue(transition.getNode().getOpacity());
-            transition.setToValue(0);
-            transition.setOnFinished(handler);
-            transition.play();
-        }
-    }
-
-    private void fadeIn(FadeTransition transition, EventHandler<ActionEvent> handler) {
-        transition.stop();
-        if (transition.getNode().getOpacity() != 0.9) {
-            transition.setFromValue(transition.getNode().getOpacity());
-            transition.setToValue(0.9);
-            transition.setOnFinished(handler);
-            transition.play();
-        }
-    }
+//    private void handleHideControls(FadeTransition transition, Boolean hide) {
+//        if (hide) {
+//            fadeOut(transition, x -> {});
+//        } else {
+//            fadeIn(transition, x -> {});
+//        }
+//    }
+//
+//    private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
+//        transition.stop();
+//        if (transition.getNode().getOpacity() != 0) {
+//            transition.setFromValue(transition.getNode().getOpacity());
+//            transition.setToValue(0);
+//            transition.setOnFinished(handler);
+//            transition.play();
+//        }
+//    }
+//
+//    private void fadeIn(FadeTransition transition, EventHandler<ActionEvent> handler) {
+//        transition.stop();
+//        if (transition.getNode().getOpacity() != 0.9) {
+//            transition.setFromValue(transition.getNode().getOpacity());
+//            transition.setToValue(0.9);
+//            transition.setOnFinished(handler);
+//            transition.play();
+//        }
+//    }
 
     private void showBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
         transition.stop();
@@ -260,6 +249,13 @@ public class MainCentralPane extends BorderPane {
         }
     }
 
+//    private FadeTransition createFadeTransition(Node node) {
+//        FadeTransition transition = new FadeTransition();
+//        transition.setNode(node);
+//        transition.setDuration(Duration.seconds(0.5));
+//        return transition;
+//    }
+
     private TranslateTransition createTranslateTransition(Node node) {
         TranslateTransition transition = new TranslateTransition();
         transition.setNode(node);
@@ -269,12 +265,12 @@ public class MainCentralPane extends BorderPane {
         return transition;
     }
 
-    private class BounceInterpolator extends Interpolator {
+    private static class BounceInterpolator extends Interpolator {
         @Override
         protected double curve(double t) {
             double freq = 2;
-            double decay = 3;
-            double dur = 0.4;
+            double decay = 2;
+            double dur = 0.7;
             if (t < dur) {
                 return t;
             } else {

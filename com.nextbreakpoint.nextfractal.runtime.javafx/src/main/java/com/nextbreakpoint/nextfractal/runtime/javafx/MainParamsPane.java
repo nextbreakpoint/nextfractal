@@ -24,39 +24,30 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
-import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorGrammarSelected;
+import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
-import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.params.MetadataEditor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
+import lombok.extern.java.Log;
 
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.listGrammars;
-import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactory;
 
+@Log
 public class MainParamsPane extends Pane {
 	private static final int SPACING = 5;
 
-	private Map<String, PlatformEventBus> buses = new HashMap<>();
-	private Map<String, Pane> panels = new HashMap<>();
-	private VBox paramsBox;
-
+	private final VBox paramsBox;
 	private Session session;
 
 	public MainParamsPane(PlatformEventBus eventBus) {
@@ -80,8 +71,8 @@ public class MainParamsPane extends Pane {
 
 		paramsBox = new VBox(4);
 
-		final BorderPane paramsPane = new BorderPane();
-		paramsBox.getChildren().add(paramsPane);
+		final MetadataEditor metadataEditorPane = new MetadataEditor(eventBus);
+		paramsBox.getChildren().add(metadataEditorPane);
 
 		final HBox buttons = new HBox(4);
 		final Button applyButton = new Button("Apply");
@@ -110,50 +101,29 @@ public class MainParamsPane extends Pane {
 			cancelButton.setPrefWidth(newValue.doubleValue());
 			scrollPane.setPrefWidth(newValue.doubleValue());
         });
-		
+
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom());
 			scrollPane.setPrefHeight(newValue.doubleValue());
+		});
+
+		grammarCombobox.setOnAction(e -> {
+			final SingleSelectionModel<String> selectionModel = grammarCombobox.getSelectionModel();
+			if (session != null && !selectionModel.getSelectedItem().equals(session.getGrammar())) {
+				eventBus.postEvent(EditorGrammarSelected.builder().grammar(selectionModel.getSelectedItem()).build());
+			}
 		});
 
 		cancelButton.setOnAction(e -> eventBus.postEvent(EditorParamsActionFired.builder().action("cancel").build()));
 		
 		applyButton.setOnAction((e) -> eventBus.postEvent(EditorParamsActionFired.builder().action("apply").build()));
 
-		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((SessionDataLoaded) event[0]).session(), ((SessionDataLoaded) event[0]).continuous(), ((SessionDataLoaded) event[0]).timeAnimation(), this::createParamsPane, paramsPane::setCenter));
-
-		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> grammarCombobox.getSelectionModel().select(((SessionDataLoaded) event[0]).session().getGrammar()));
-
-		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> buses.clear());
-		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> panels.clear());
-
-		grammarCombobox.setOnAction(e -> {
-			if (session != null && !grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
-				eventBus.postEvent(EditorGrammarSelected.builder().grammar(grammarCombobox.getSelectionModel().getSelectedItem()).build());
-			}
-		});
+		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionDataLoaded(grammarCombobox, (SessionDataLoaded) event));
 	}
 
-	private void handleSessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean timeAnimation, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
-		if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
-			if (this.session != null) {
-				Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(EventBus::disable);
-			}
-			Pane rootPane = panels.get(session.getPluginId());
-			if (rootPane == null) {
-				PlatformEventBus innerBus = new PlatformEventBus(session.getPluginId(), eventBus);
-				rootPane = factory.apply(innerBus, session);
-				panels.put(session.getPluginId(), rootPane);
-				buses.put(session.getPluginId(), innerBus);
-			}
-			consumer.accept(rootPane);
-			Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(EventBus::enable);
-		}
-		this.session = session;
-	}
-
-	private Pane createParamsPane(PlatformEventBus eventBus, Session session) {
-		return tryFindFactory(session.getPluginId()).map(factory -> factory.createParamsPane(eventBus, session)).orElse(null);
+	private void handleSessionDataLoaded(ComboBox<String> grammarCombobox, SessionDataLoaded event) {
+		session = event.session();
+		grammarCombobox.getSelectionModel().select(event.session().getGrammar());
 	}
 
 	public void setParamsDisable(boolean disabled) {

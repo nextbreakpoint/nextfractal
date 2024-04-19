@@ -25,6 +25,8 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
+import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.scene.layout.Pane;
@@ -33,14 +35,7 @@ public interface UIFactory {
 	/**
 	 * @return
 	 */
-	public String getId();
-
-	/**
-	 * @param eventBus
-     * @param session
-     * @return
-	 */
-	public Pane createEditorPane(PlatformEventBus eventBus, Session session);
+	String getId();
 
 	/**
 	 * @param eventBus
@@ -49,22 +44,30 @@ public interface UIFactory {
 	 * @param height
 	 * @return
 	 */
-	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height);
+	Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height);
 
 	/**
-	 * @param eventBus
-	 * @param session
+	 * @param bitmap
 	 * @return
+	 * @throws Exception
 	 */
-	public Pane createParamsPane(PlatformEventBus eventBus, Session session);
+	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
-	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
-
-	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
+	BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
 
 	/**
 	 * @param resourceName
 	 * @return
 	 */
-	public Try<String, Exception> loadResource(String resourceName);
+	Try<String, Exception> loadResource(String resourceName);
+
+	/**
+	 * @return
+	 */
+	ParserStrategy createParserStrategy();
+
+	/**
+	 * @return
+	 */
+	ParamsStrategy createParamsStrategy();
 }

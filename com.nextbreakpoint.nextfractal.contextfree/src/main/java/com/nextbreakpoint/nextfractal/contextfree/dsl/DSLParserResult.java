@@ -22,30 +22,43 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
+package com.nextbreakpoint.nextfractal.contextfree.dsl;
 
-import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
-public interface ToolContext {
-	public double getWidth();
+import java.util.List;
 
-	public double getHeight();
+public class DSLParserResult {
+	private CFDG cfdg;
+	private Type type;
+	private String source;
+	private List<SourceError> errors;
 
-	public Number getInitialSize();
+	public DSLParserResult(CFDG cfdg, Type type, String source, List<SourceError> errors) {
+		this.cfdg = cfdg;
+		this.type = type;
+		this.source = source;
+		this.errors = errors;
+	}
 
-	public Number getInitialCenter();
+	public CFDG getCFDG() {
+		return cfdg;
+	}
 
-	public double getZoomSpeed();
+	public String getSource() {
+		return source;
+	}
 
-	public RendererFactory getRendererFactory();
+	public List<SourceError> getErrors() {
+		return errors;
+	}
 
-	public MandelbrotMetadata getMetadata();
+	public Type getType() {
+		return type;
+	}
 
-	public void setView(MandelbrotMetadata view, boolean continuous, boolean appendHistory);
-
-	public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory);
-
-	public void setPoint(MandelbrotMetadata view, boolean continuous, boolean appendHistory);
+	public enum Type {
+		INTERPRETER
+	}
 }

@@ -28,11 +28,15 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Builder(setterPrefix = "with", toBuilder = true)
+@AllArgsConstructor
 public class ContextFreeSession extends Session {
 	private static final Logger logger = Logger.getLogger(ContextFreeSession.class.getName());
 
@@ -71,8 +75,8 @@ public class ContextFreeSession extends Session {
 	}
 
 	private static String getInitialSource() {
-		return Try.of(() -> SessionUtils.readAll(ContextFreeSession.class.getResourceAsStream("/contextfree.txt")))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot load resource /contextfree.txt"))
+		return Try.of(() -> SessionUtils.readAll(Objects.requireNonNull(ContextFreeSession.class.getResourceAsStream("/contextfree.txt"))))
+				.onFailure(e -> logger.log(Level.WARNING, "Can't load resource /contextfree.txt"))
 				.orElse("");
 	}
 

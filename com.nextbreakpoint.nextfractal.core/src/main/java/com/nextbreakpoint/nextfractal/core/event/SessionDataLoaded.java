@@ -4,4 +4,4 @@ import com.nextbreakpoint.nextfractal.core.common.Session;
 import lombok.Builder;
 
 @Builder
-public record SessionDataLoaded(Session session, boolean continuous, boolean timeAnimation) {}
+public record SessionDataLoaded(Session session, boolean continuous, boolean appendToHistory) {}

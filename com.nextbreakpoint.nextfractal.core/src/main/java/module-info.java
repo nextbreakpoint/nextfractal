@@ -31,6 +31,8 @@ module com.nextbreakpoint.nextfractal.core {
     requires com.fasterxml.jackson.annotation;
     requires com.nextbreakpoint.nextfractal.libraries;
     exports com.nextbreakpoint.nextfractal.core.common;
+    exports com.nextbreakpoint.nextfractal.core.editor;
+    exports com.nextbreakpoint.nextfractal.core.params;
     exports com.nextbreakpoint.nextfractal.core.encode;
     exports com.nextbreakpoint.nextfractal.core.export;
     exports com.nextbreakpoint.nextfractal.core.render;
@@ -38,4 +40,5 @@ module com.nextbreakpoint.nextfractal.core {
     uses com.nextbreakpoint.nextfractal.core.common.CoreFactory;
     uses com.nextbreakpoint.nextfractal.core.encode.Encoder;
     opens com.nextbreakpoint.nextfractal.core.common to com.fasterxml.jackson.databind;
+    opens com.nextbreakpoint.nextfractal.core.editor to com.fasterxml.jackson.databind;
 }

@@ -28,7 +28,6 @@ import com.nextbreakpoint.nextfractal.contextfree.core.ParserException;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.exceptions.CFDGException;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -47,10 +46,10 @@ public class DSLParser {
 	public DSLParser() {
 	}
 	
-	public ParserResult parse(String source) throws ParserException {
+	public DSLParserResult parse(String source) throws ParserException {
 		List<SourceError> errors = new ArrayList<>();
 		CFDG cfdg = parse(source, errors);
-		return new ParserResult(cfdg, ParserResult.Type.INTERPRETER, source, errors);
+		return new DSLParserResult(cfdg, DSLParserResult.Type.INTERPRETER, source, errors);
 	}
 
 	private CFDG parse(String source, List<SourceError> errors) throws ParserException {

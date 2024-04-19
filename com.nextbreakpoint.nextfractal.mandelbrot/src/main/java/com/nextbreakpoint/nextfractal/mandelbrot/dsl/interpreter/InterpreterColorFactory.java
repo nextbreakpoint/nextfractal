@@ -117,12 +117,12 @@ public class InterpreterColorFactory implements ClassFactory<Color> {
 			long length = e.getLocation().getStopIndex() - e.getLocation().getStartIndex();
 			String message = e.getMessage();
 			errors.add(new SourceError(type, line, charPositionInLine, index, length, message));
-			throw new ParserException("Cannot build color", errors);
+			throw new ParserException("Can't build color", errors);
 		} catch (Exception e) {
 			SourceError.ErrorType type = SourceError.ErrorType.SCRIPT_COMPILER;
 			String message = e.getMessage();
 			errors.add(new SourceError(type, 0, 0, 0, 0, message));
-			throw new ParserException("Cannot build color", errors);
+			throw new ParserException("Can't build color", errors);
 		}
 	}
 

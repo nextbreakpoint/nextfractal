@@ -27,21 +27,18 @@ package com.nextbreakpoint.nextfractal.mandelbrot.dsl.interpreter;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ErrorStrategy;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult.Type;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult.Type;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +48,10 @@ import java.util.logging.Logger;
 public class InterpreterDSLParser {
     private static final Logger logger = Logger.getLogger(InterpreterDSLParser.class.getName());
 
-    public ParserResult parse(String source) throws ParserException {
+    public DSLParserResult parse(String source) throws ParserException {
         List<SourceError> errors = new ArrayList<>();
         ASTFractal ast = parse(source, errors);
-        return new ParserResult(ast, Type.INTERPRETER, source, "", "", errors, "", "");
+        return new DSLParserResult(ast, Type.INTERPRETER, source, "", "", errors, "", "");
     }
 
     private ASTFractal parse(String source, List<SourceError> errors) throws ParserException {
