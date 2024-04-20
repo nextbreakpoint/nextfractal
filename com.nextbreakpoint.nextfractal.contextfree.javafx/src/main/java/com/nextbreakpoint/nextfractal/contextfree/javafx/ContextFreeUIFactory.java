@@ -32,18 +32,24 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeParamsStrategy;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeParserStrategy;
-import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
 import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.javafx.KeyHandler;
+import com.nextbreakpoint.nextfractal.core.javafx.MetadataDelegate;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.RenderingContext;
+import com.nextbreakpoint.nextfractal.core.javafx.RenderingStrategy;
+import com.nextbreakpoint.nextfractal.core.javafx.ToolContext;
 import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.viewer.Toolbar;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -53,17 +59,14 @@ import javafx.scene.layout.Pane;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class ContextFreeUIFactory implements UIFactory {
 	public static final String PLUGIN_ID = "ContextFree";
 
+	@Override
 	public String getId() {
 		return PLUGIN_ID;
-	}
-
-	@Override
-	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
-		return new RenderPane((ContextFreeSession) session, eventBus, width, height, 1, 1);
 	}
 
 	@Override
@@ -107,6 +110,43 @@ public class ContextFreeUIFactory implements UIFactory {
 	@Override
 	public ParamsStrategy createParamsStrategy() {
 		return new ContextFreeParamsStrategy();
+	}
+
+	@Override
+	public RenderingContext createRenderingContext() {
+		final RenderingContext renderingContext = new RenderingContext();
+		renderingContext.setZoomSpeed(1.025);
+		return renderingContext;
+	}
+
+	@Override
+	public MetadataDelegate createMetadataDelegate(PlatformEventBus eventBus, Supplier<Session> supplier) {
+		return new ContextFreeMetadataDelegate(eventBus, supplier);
+	}
+
+	@Override
+	public RenderingStrategy createRenderingStrategy(RenderingContext renderingContext, MetadataDelegate delegate, int width, int height) {
+		return new ContextFreeRenderingStrategy(renderingContext, delegate, width, height, 1, 1);
+	}
+
+	@Override
+	public KeyHandler createKeyHandler(RenderingContext renderingContext, MetadataDelegate delegate) {
+		return new ContextFreeKeyHandler(renderingContext, delegate);
+	}
+
+	@Override
+	public Pane createRenderingPanel(RenderingContext renderingContext, int width, int height) {
+		return new ContextFreeRenderingPanel(renderingContext, width, height);
+	}
+
+	@Override
+	public Toolbar createToolbar(PlatformEventBus eventBus, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext) {
+		return new ContextFreeToolbar(delegate, eventBus::postEvent, (ContextFreeToolContext) toolContext);
+	}
+
+	@Override
+	public ToolContext<? extends Metadata> createToolContext(RenderingContext renderingContext, RenderingStrategy renderingStrategy, MetadataDelegate delegate, int width, int height) {
+		return new ContextFreeToolContext(renderingContext, (ContextFreeRenderingStrategy) renderingStrategy, delegate, width, height);
 	}
 
 	private RendererTile createRendererTile(int width, int height) {

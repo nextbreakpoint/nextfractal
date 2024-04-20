@@ -25,11 +25,15 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
 import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.javafx.viewer.Toolbar;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.scene.layout.Pane;
+
+import java.util.function.Supplier;
 
 public interface UIFactory {
 	/**
@@ -38,21 +42,18 @@ public interface UIFactory {
 	String getId();
 
 	/**
-	 * @param eventBus
-	 * @param session
-	 * @param width
-	 * @param height
-	 * @return
-	 */
-	Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height);
-
-	/**
 	 * @param bitmap
 	 * @return
 	 * @throws Exception
 	 */
 	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
+	/**
+	 * @param session
+	 * @param size
+	 * @return
+	 * @throws Exception
+	 */
 	BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
 
 	/**
@@ -70,4 +71,58 @@ public interface UIFactory {
 	 * @return
 	 */
 	ParamsStrategy createParamsStrategy();
+
+	/**
+	 * @return
+	 */
+	RenderingContext createRenderingContext();
+
+	/**
+	 * @param eventBus
+	 * @param supplier
+	 * @return
+	 */
+	MetadataDelegate createMetadataDelegate(PlatformEventBus eventBus, Supplier<Session> supplier);
+
+	/**
+	 * @param renderingContext
+	 * @param delegate
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	RenderingStrategy createRenderingStrategy(RenderingContext renderingContext, MetadataDelegate delegate, int width, int height);
+
+	/**
+	 * @param renderingContext
+	 * @param delegate
+	 * @return
+	 */
+	KeyHandler createKeyHandler(RenderingContext renderingContext, MetadataDelegate delegate);
+
+	/**
+	 * @param renderingContext
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	Pane createRenderingPanel(RenderingContext renderingContext, int width, int height);
+
+	/**
+	 * @param eventBus
+	 * @param delegate
+	 * @param toolContext
+	 * @return
+	 */
+	Toolbar createToolbar(PlatformEventBus eventBus, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext);
+
+	/**
+	 * @param renderingContext
+	 * @param renderingStrategy
+	 * @param delegate
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	ToolContext<? extends Metadata> createToolContext(RenderingContext renderingContext, RenderingStrategy renderingStrategy, MetadataDelegate delegate, int width, int height);
 }

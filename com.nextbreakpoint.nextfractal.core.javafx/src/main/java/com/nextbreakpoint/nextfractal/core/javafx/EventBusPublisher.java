@@ -22,16 +22,8 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.javafx;
+package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
-import com.nextbreakpoint.nextfractal.core.javafx.viewer.Viewer;
-import javafx.scene.layout.BorderPane;
-import lombok.extern.java.Log;
-
-@Log
-public class MainRenderPane extends BorderPane {
-    public MainRenderPane(PlatformEventBus eventBus, int width, int height) {
-        setCenter(new Viewer(eventBus, width, height));
-    }
+public interface EventBusPublisher {
+    void postEvent(Object event);
 }

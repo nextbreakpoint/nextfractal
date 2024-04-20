@@ -25,7 +25,11 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.module;
 
 import com.nextbreakpoint.nextfractal.core.common.Double2D;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode
+@Builder(setterPrefix = "with", toBuilder = true)
 public class MandelbrotOptions {
 	private final boolean showPreview;
 	private final boolean showTraps;
@@ -34,31 +38,31 @@ public class MandelbrotOptions {
 	private final Double2D previewOrigin;
 	private final Double2D previewSize;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		MandelbrotOptions that = (MandelbrotOptions) o;
-
-		if (showPreview != that.showPreview) return false;
-		if (showTraps != that.showTraps) return false;
-		if (showOrbit != that.showOrbit) return false;
-		if (showPoint != that.showPoint) return false;
-		if (previewOrigin != null ? !previewOrigin.equals(that.previewOrigin) : that.previewOrigin != null) return false;
-		return previewSize != null ? previewSize.equals(that.previewSize) : that.previewSize == null;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = (showPreview ? 1 : 0);
-		result = 31 * result + (showTraps ? 1 : 0);
-		result = 31 * result + (showOrbit ? 1 : 0);
-		result = 31 * result + (showPoint ? 1 : 0);
-		result = 31 * result + (previewOrigin != null ? previewOrigin.hashCode() : 0);
-		result = 31 * result + (previewSize != null ? previewSize.hashCode() : 0);
-		return result;
-	}
+//	@Override
+//	public boolean equals(Object o) {
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//
+//		MandelbrotOptions that = (MandelbrotOptions) o;
+//
+//		if (showPreview != that.showPreview) return false;
+//		if (showTraps != that.showTraps) return false;
+//		if (showOrbit != that.showOrbit) return false;
+//		if (showPoint != that.showPoint) return false;
+//		if (previewOrigin != null ? !previewOrigin.equals(that.previewOrigin) : that.previewOrigin != null) return false;
+//		return previewSize != null ? previewSize.equals(that.previewSize) : that.previewSize == null;
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		int result = (showPreview ? 1 : 0);
+//		result = 31 * result + (showTraps ? 1 : 0);
+//		result = 31 * result + (showOrbit ? 1 : 0);
+//		result = 31 * result + (showPoint ? 1 : 0);
+//		result = 31 * result + (previewOrigin != null ? previewOrigin.hashCode() : 0);
+//		result = 31 * result + (previewSize != null ? previewSize.hashCode() : 0);
+//		return result;
+//	}
 
 	public MandelbrotOptions() {
 		this.showPreview = false;
@@ -104,6 +108,6 @@ public class MandelbrotOptions {
 
 	@Override
 	public String toString() {
-		return "[showPreview=" + showPreview + ", showTraps=" + showTraps +	", showOrbit=" + showOrbit + ", showPoint=" + showPoint + ", previewOrigin=" + previewOrigin + ", previewSize=" + previewSize +	"]";
+		return "[showJulia=" + showPreview + ", showTraps=" + showTraps +	", showOrbit=" + showOrbit + ", showPoint=" + showPoint + ", previewOrigin=" + previewOrigin + ", previewSize=" + previewSize +	"]";
 	}
 }

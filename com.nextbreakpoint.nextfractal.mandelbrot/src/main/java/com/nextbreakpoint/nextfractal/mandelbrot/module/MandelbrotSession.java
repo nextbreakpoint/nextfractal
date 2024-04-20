@@ -33,11 +33,14 @@ import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@EqualsAndHashCode(callSuper = false)
 @Builder(setterPrefix = "with", toBuilder = true)
 @AllArgsConstructor
 public class MandelbrotSession extends Session {

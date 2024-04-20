@@ -22,16 +22,43 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.javafx;
+package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
-import com.nextbreakpoint.nextfractal.core.javafx.viewer.Viewer;
-import javafx.scene.layout.BorderPane;
-import lombok.extern.java.Log;
+import javafx.scene.canvas.Canvas;
+import lombok.Getter;
+import lombok.Setter;
 
-@Log
-public class MainRenderPane extends BorderPane {
-    public MainRenderPane(PlatformEventBus eventBus, int width, int height) {
-        setCenter(new Viewer(eventBus, width, height));
-    }
+import java.util.HashMap;
+import java.util.Map;
+
+public class RenderingContext {
+	private final Map<String, Canvas> canvasMap = new HashMap<>();
+
+	@Getter
+	@Setter
+	private boolean timeAnimation;
+
+	@Getter
+	@Setter
+	private boolean playback;
+
+	@Getter
+	@Setter
+	private double zoomSpeed;
+
+	@Getter
+	@Setter
+	private Tool tool;
+
+	public void registerCanvas(String name, Canvas canvas) {
+		canvasMap.put(name, canvas);
+	}
+
+	public Canvas getCanvas(String name) {
+		return canvasMap.get(name);
+	}
+
+	public void dispose() {
+		canvasMap.clear();
+	}
 }

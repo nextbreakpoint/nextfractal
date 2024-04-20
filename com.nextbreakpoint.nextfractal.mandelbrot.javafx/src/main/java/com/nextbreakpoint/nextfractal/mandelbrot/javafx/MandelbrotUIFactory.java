@@ -27,15 +27,22 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.common.Integer4D;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
 import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.javafx.KeyHandler;
+import com.nextbreakpoint.nextfractal.core.javafx.MetadataDelegate;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.RenderingContext;
+import com.nextbreakpoint.nextfractal.core.javafx.RenderingStrategy;
+import com.nextbreakpoint.nextfractal.core.javafx.ToolContext;
 import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.viewer.Toolbar;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -57,28 +64,14 @@ import javafx.scene.layout.Pane;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class MandelbrotUIFactory implements UIFactory {
 	public static final String PLUGIN_ID = "Mandelbrot";
 
+	@Override
 	public String getId() {
 		return PLUGIN_ID;
-	}
-
-	@Override
-	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
-		final int[] cells = optimalRowsAndCols(Runtime.getRuntime().availableProcessors());
-		return new RenderPane((MandelbrotSession) session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", cells[0]), Integer.getInteger("mandelbrot.renderer.cols", cells[1]));
-	}
-
-	private int[] optimalRowsAndCols(int processors) {
-		if (processors > 8) {
-			return new int[] { 3, 3 };
-		} else if (processors >= 4) {
-			return new int[] { 2, 2 };
-		} else {
-			return new int[] { 1, 1 };
-		}
 	}
 
 	@Override
@@ -137,12 +130,69 @@ public class MandelbrotUIFactory implements UIFactory {
 		return new MandelbrotParamsStrategy();
 	}
 
+	@Override
+	public RenderingContext createRenderingContext() {
+		final RenderingContext renderingContext = new RenderingContext();
+		renderingContext.setZoomSpeed(1.025);
+		return renderingContext;
+	}
+
+	@Override
+	public MetadataDelegate createMetadataDelegate(PlatformEventBus eventBus, Supplier<Session> supplier) {
+		return new MandelbrotMetadataDelegate(eventBus, supplier);
+	}
+
+	@Override
+	public RenderingStrategy createRenderingStrategy(RenderingContext renderingContext, MetadataDelegate delegate, int width, int height) {
+		final int[] cells = optimalRowsAndCols(Runtime.getRuntime().availableProcessors());
+
+		return new MandelbrotRenderingStrategy(renderingContext, delegate, width, height, getRows(cells), getCols(cells));
+	}
+
+	@Override
+	public KeyHandler createKeyHandler(RenderingContext renderingContext, MetadataDelegate delegate) {
+		return new MandelbrotKeyHandler(renderingContext, delegate);
+	}
+
+	@Override
+	public Pane createRenderingPanel(RenderingContext renderingContext, int width, int height) {
+		return new MandelbrotRenderingPanel(renderingContext, width, height);
+	}
+
+	@Override
+	public Toolbar createToolbar(PlatformEventBus eventBus, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext) {
+		return new MandelbrotToolbar(delegate, eventBus::postEvent, (MandelbrotToolContext) toolContext);
+	}
+
+	@Override
+	public ToolContext<? extends Metadata> createToolContext(RenderingContext renderingContext, RenderingStrategy renderingStrategy, MetadataDelegate delegate, int width, int height) {
+		return new MandelbrotToolContext(renderingContext, (MandelbrotRenderingStrategy) renderingStrategy, delegate, width, height);
+	}
+
 	private RendererTile createRendererTile(int width, int height) {
         RendererSize imageSize = new RendererSize(width, height);
 		RendererSize tileSize = new RendererSize(width, height);
 		RendererSize tileBorder = new RendererSize(0, 0);
 		RendererPoint tileOffset = new RendererPoint(0, 0);
         return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+	}
+
+	private static Integer getRows(int[] cells) {
+		return Integer.getInteger("mandelbrot.renderer.rows", cells[0]);
+	}
+
+	private static Integer getCols(int[] cells) {
+		return Integer.getInteger("mandelbrot.renderer.cols", cells[1]);
+	}
+
+	private static int[] optimalRowsAndCols(int processors) {
+		if (processors > 8) {
+			return new int[] { 3, 3 };
+		} else if (processors >= 4) {
+			return new int[] { 2, 2 };
+		} else {
+			return new int[] { 1, 1 };
+		}
 	}
 
 	private static class GridItemRendererAdapter implements GridItemRenderer {

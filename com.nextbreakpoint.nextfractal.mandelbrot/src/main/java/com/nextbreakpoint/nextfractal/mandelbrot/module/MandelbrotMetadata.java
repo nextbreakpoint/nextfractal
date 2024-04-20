@@ -29,7 +29,9 @@ import com.nextbreakpoint.nextfractal.core.common.Double4D;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Time;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(exclude = "time")
 @Builder(setterPrefix = "with", toBuilder = true)
 public class MandelbrotMetadata implements Metadata {
 	private final Double4D translation;
@@ -102,32 +104,32 @@ public class MandelbrotMetadata implements Metadata {
 	public String toString() {
 		return "[translation=" + translation + ", rotation=" + rotation + ", scale=" + scale + ", point=" + point + ", time=" + time + ", julia=" + julia + ", options=" + options + "]";
 	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		MandelbrotMetadata that = (MandelbrotMetadata) o;
-
-		if (julia != that.julia) return false;
-		if (translation != null ? !translation.equals(that.translation) : that.translation != null) return false;
-		if (rotation != null ? !rotation.equals(that.rotation) : that.rotation != null) return false;
-		if (scale != null ? !scale.equals(that.scale) : that.scale != null) return false;
-		if (point != null ? !point.equals(that.point) : that.point != null) return false;
-//		if (time != null ? !time.equals(that.time) : that.time != null) return false;
-		return options != null ? options.equals(that.options) : that.options == null;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = translation != null ? translation.hashCode() : 0;
-		result = 31 * result + (rotation != null ? rotation.hashCode() : 0);
-		result = 31 * result + (scale != null ? scale.hashCode() : 0);
-		result = 31 * result + (point != null ? point.hashCode() : 0);
-//		result = 31 * result + (time != null ? time.hashCode() : 0);
-		result = 31 * result + (julia ? 1 : 0);
-		result = 31 * result + (options != null ? options.hashCode() : 0);
-		return result;
-	}
+//
+//	@Override
+//	public boolean equals(Object o) {
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//
+//		MandelbrotMetadata that = (MandelbrotMetadata) o;
+//
+//		if (julia != that.julia) return false;
+//		if (translation != null ? !translation.equals(that.translation) : that.translation != null) return false;
+//		if (rotation != null ? !rotation.equals(that.rotation) : that.rotation != null) return false;
+//		if (scale != null ? !scale.equals(that.scale) : that.scale != null) return false;
+//		if (point != null ? !point.equals(that.point) : that.point != null) return false;
+////		if (time != null ? !time.equals(that.time) : that.time != null) return false;
+//		return options != null ? options.equals(that.options) : that.options == null;
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		int result = translation != null ? translation.hashCode() : 0;
+//		result = 31 * result + (rotation != null ? rotation.hashCode() : 0);
+//		result = 31 * result + (scale != null ? scale.hashCode() : 0);
+//		result = 31 * result + (point != null ? point.hashCode() : 0);
+////		result = 31 * result + (time != null ? time.hashCode() : 0);
+//		result = 31 * result + (julia ? 1 : 0);
+//		result = 31 * result + (options != null ? options.hashCode() : 0);
+//		return result;
+//	}
 }

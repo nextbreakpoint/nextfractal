@@ -11,7 +11,6 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.UIPlugins;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.geometry.Rectangle2D;
@@ -21,7 +20,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -61,11 +59,6 @@ public class ApplicationUtils {
     public static Try<GridItemRenderer, Exception> createRenderer(Bitmap bitmap) {
         return tryFindFactory(((Session) bitmap.getProperty("session")).getPluginId())
                 .flatMap(factory -> Try.of(() -> factory.createRenderer(bitmap)));
-    }
-
-    public static Try<Pane, Exception> createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
-        return tryFindFactory(session.getPluginId())
-                .map(plugin -> Objects.requireNonNull(plugin.createRenderPane(eventBus, session, width, height)));
     }
 
     public static void loadStyleSheets(Scene scene) {

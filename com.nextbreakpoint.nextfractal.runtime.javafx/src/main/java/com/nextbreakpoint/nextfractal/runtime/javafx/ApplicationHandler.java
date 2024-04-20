@@ -28,7 +28,9 @@ import com.nextbreakpoint.nextfractal.core.common.Bundle;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
+import com.nextbreakpoint.nextfractal.core.common.ParserResult;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipsLoaded;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipsMerged;
@@ -36,6 +38,7 @@ import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.CurrentFileChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorActionFired;
+import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.EditorSaveFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.EditorStoreFileRequested;
@@ -44,12 +47,16 @@ import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
+import com.nextbreakpoint.nextfractal.core.event.RenderDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionBundleLoaded;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.SessionErrorChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionExportRequested;
+import com.nextbreakpoint.nextfractal.core.event.SessionReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionStatusChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
+import com.nextbreakpoint.nextfractal.core.event.TimeAnimationActionFired;
 import com.nextbreakpoint.nextfractal.core.event.WorkspaceChanged;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
@@ -107,6 +114,60 @@ public class ApplicationHandler {
         eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> handlePlaybackStopped());
 
         eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> handleEditorActionFired(((EditorActionFired) event).action()));
+
+        eventBus.subscribe(EditorDataChanged.class.getSimpleName(), event -> {
+            final Session session = ((EditorDataChanged) event).session();
+            final boolean continuous = ((EditorDataChanged)event).continuous();
+            final boolean appendToHistory = ((EditorDataChanged)event).appendToHistory();
+            notifySessionChanged(eventBus, session, continuous, appendToHistory && !continuous);
+        });
+
+        eventBus.subscribe(RenderDataChanged.class.getSimpleName(), event -> {
+            final Session session = ((RenderDataChanged) event).session();
+            final boolean continuous = ((RenderDataChanged) event).continuous();
+            final boolean appendToHistory = ((RenderDataChanged) event).appendToHistory();
+            notifySessionChanged(eventBus, session, continuous, appendToHistory && !continuous);
+        });
+
+        eventBus.subscribe(SessionReportChanged.class.getSimpleName(), event -> {
+            final ParserResult report = ((SessionReportChanged) event).result();
+            final String message = formatErrors(report.errors());
+            eventBus.postEvent(SessionErrorChanged.builder().error(message).build());
+            eventBus.postEvent(SessionStatusChanged.builder().status(message).build());
+            if (report.errors().isEmpty()) {
+                notifyRenderDataChanged(eventBus, ((SessionReportChanged) event).session(), ((SessionReportChanged) event).continuous(), ((SessionReportChanged) event).appendToHistory());
+            }
+        });
+
+        eventBus.subscribe(TimeAnimationActionFired.class.getSimpleName(), event -> handleTimeAnimationAction(((TimeAnimationActionFired)event).action()));
+    }
+
+	private String formatErrors(List<SourceError> errors) {
+        final StringBuilder builder = new StringBuilder();
+        if (errors != null) {
+            for (SourceError error : errors) {
+                builder.append("Line ");
+                builder.append(error.getLine());
+                builder.append(": ");
+                builder.append(error.getMessage());
+                builder.append("\n");
+            }
+        }
+        return builder.toString();
+	}
+
+    private void notifySessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean historyAppend) {
+        eventBus.postEvent(SessionDataChanged.builder().session(session).continuous(continuous).appendToHistory(historyAppend).build());
+    }
+
+    private void notifyRenderDataChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean historyAppend) {
+        eventBus.postEvent(RenderDataChanged.builder().session(session).continuous(continuous).appendToHistory(historyAppend).build());
+    }
+
+    private void handleTimeAnimationAction(String action) {
+        if ("stop".equals(action)) {
+            eventBus.postEvent(SessionDataChanged.builder().session(session).continuous(false).appendToHistory(true).build());
+        }
     }
 
     private void handleSessionDataLoaded(SessionDataLoaded event) {
