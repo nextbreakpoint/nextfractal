@@ -44,8 +44,7 @@ import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactor
 public class ApplicationUtils {
     private static final String PROPERTY_DIRECTORY_WORKSPACE = "com.nextbreakpoint.nextfractal.directory.workspace";
     private static final String PROPERTY_DIRECTORY_EXAMPLES = "com.nextbreakpoint.nextfractal.directory.examples";
-    private static final String PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE = "[user.dir]/.nextfractal";
-    private static final String PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE = "[user.home]";
+    private static final String WORKSPACE_DIRECTORY = ".nextfractal";
 
     public static void printPlugins() {
         Plugins.factories().forEach(plugin -> log.fine("Found plugin " + plugin.getId()));
@@ -172,7 +171,7 @@ public class ApplicationUtils {
 
     public static File getExamples() {
         File path = new File(getDefaultDirectoryExamples());
-        log.log(Level.FINE, "examples " + path.getAbsolutePath());
+        log.info("examples = " + path.getAbsolutePath());
         if (!path.canRead()) {
             log.severe("Can't read from examples: " + path.getAbsolutePath());
         }
@@ -191,14 +190,18 @@ public class ApplicationUtils {
     }
 
     private static String getDefaultDirectoryWorkspace() {
-        return System.getProperty(PROPERTY_DIRECTORY_WORKSPACE, PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE)
-                .replace("[user.home]", System.getProperty("user.home"))
-                .replace("[user.dir]", System.getProperty("user.dir"));
+        return System.getProperty(PROPERTY_DIRECTORY_WORKSPACE, getWorkspaceDefaultValue().getAbsolutePath());
     }
 
     private static String getDefaultDirectoryExamples() {
-        return System.getProperty(PROPERTY_DIRECTORY_EXAMPLES, PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE)
-                .replace("[user.home]", System.getProperty("user.home"))
-                .replace("[user.dir]", System.getProperty("user.dir"));
+        return System.getProperty(PROPERTY_DIRECTORY_EXAMPLES, getExamplesDefaultValue().getAbsolutePath());
+    }
+
+    private static File getWorkspaceDefaultValue() {
+        return new File(System.getProperty("user.home"), WORKSPACE_DIRECTORY);
+    }
+
+    private static File getExamplesDefaultValue() {
+        return new File(System.getProperty("user.home"));
     }
 }
