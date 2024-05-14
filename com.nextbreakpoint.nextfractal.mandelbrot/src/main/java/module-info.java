@@ -23,7 +23,9 @@
  *
  */
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.MetadataCodec;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotFactory;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadataCodec;
 
 module com.nextbreakpoint.nextfractal.mandelbrot {
     requires static lombok;
@@ -41,5 +43,6 @@ module com.nextbreakpoint.nextfractal.mandelbrot {
     exports com.nextbreakpoint.nextfractal.mandelbrot.renderer;
     exports com.nextbreakpoint.nextfractal.mandelbrot.core;
     provides CoreFactory with MandelbrotFactory;
+    provides MetadataCodec with MandelbrotMetadataCodec;
     opens com.nextbreakpoint.nextfractal.mandelbrot.module to com.fasterxml.jackson.databind;
 }

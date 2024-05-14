@@ -24,16 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
-public abstract class Session {
-	public abstract String getPluginId();
+public interface MetadataCodec {
+    Metadata decodeMetadata(String metadata) throws Exception;
 
-	public abstract String getGrammar();
-
-	public abstract String getScript();
-
-	public abstract Metadata getMetadata();
-
-	public abstract Session withSource(String source);
-
-	public abstract Session withMetadata(Metadata metadata);
+    String encodeMetadata(Object metadata) throws Exception;
 }

@@ -9,6 +9,7 @@ import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
+import com.nextbreakpoint.nextfractal.core.common.TileUtils;
 import com.nextbreakpoint.nextfractal.core.javafx.MetadataDelegate;
 import com.nextbreakpoint.nextfractal.core.javafx.RenderingContext;
 import com.nextbreakpoint.nextfractal.core.javafx.RenderingStrategy;
@@ -52,7 +53,7 @@ public class ContextFreeRenderingStrategy implements RenderingStrategy {
         renderFactory = new JavaFXRendererFactory();
 
         Map<String, Integer> hints = new HashMap<>();
-        coordinator = createRendererCoordinator(hints, createSingleTile(width, height));
+        coordinator = createRendererCoordinator(hints, TileUtils.createRendererTile(width, height));
     }
 
     @Override
@@ -72,6 +73,16 @@ public class ContextFreeRenderingStrategy implements RenderingStrategy {
 
     @Override
     public void updateCoordinators(Session session, boolean continuous, boolean timeAnimation) {
+//        if (coordinator != null) {
+//            coordinator.abort();
+//            coordinator.waitFor();
+//            if (cfdg != null) {
+//                coordinator.setInterpreter(new CFDGInterpreter(cfdg));
+//                coordinator.setSeed(((ContextFreeMetadata) delegate.getMetadata()).getSeed());
+//            }
+//            coordinator.init();
+//            coordinator.run();
+//        }
     }
 
     @Override
@@ -89,25 +100,19 @@ public class ContextFreeRenderingStrategy implements RenderingStrategy {
             if (coordinator != null) {
                 coordinator.abort();
                 coordinator.waitFor();
-                if (cfdgChanged) {
+                if (cfdgChanged && cfdg != null) {
                     coordinator.setInterpreter(new CFDGInterpreter(cfdg));
                     coordinator.setSeed(((ContextFreeMetadata)delegate.getMetadata()).getSeed());
                 }
                 coordinator.init();
                 coordinator.run();
-                Thread.sleep(100);
                 return coordinator.getErrors();
             }
-        } catch (ParserException e) {
+        } catch (Exception e) {
             if (log.isLoggable(Level.FINE)) {
                 log.log(Level.FINE, "Can't render image: " + e.getMessage());
             }
-            return e.getErrors();
-        } catch (InterruptedException e) {
-            if (log.isLoggable(Level.FINE)) {
-                log.log(Level.FINE, "Can't render image: " + e.getMessage());
-            }
-            return Collections.singletonList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
+            return List.of(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Can't render image"));
         }
         return Collections.emptyList();
     }
@@ -131,15 +136,6 @@ public class ContextFreeRenderingStrategy implements RenderingStrategy {
 
     private DefaultThreadFactory createThreadFactory(String name, int priority) {
         return new DefaultThreadFactory(name, true, priority);
-    }
-
-    //TODO move to utility class
-    private RendererTile createSingleTile(int width, int height) {
-        RendererSize imageSize = new RendererSize(width, height);
-        RendererSize tileSize = new RendererSize(width, height);
-        RendererSize tileBorder = new RendererSize(0, 0);
-        RendererPoint tileOffset = new RendererPoint(0, 0);
-        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
     }
 
     private boolean[] createCFDG(DSLParserResult report) throws ParserException {

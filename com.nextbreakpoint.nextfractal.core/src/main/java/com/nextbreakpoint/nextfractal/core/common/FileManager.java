@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.core.common;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextbreakpoint.Try;
 
@@ -40,8 +41,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -49,217 +49,318 @@ import java.util.zip.ZipOutputStream;
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
 public abstract class FileManager {
-    public abstract Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public abstract Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries);
-
-    public static Try<Bundle, Exception> loadFile(File file) {
-        return Plugins.factories().filter(f -> f.createFileManager().canImportFile(file)).findFirst()
-            .map(f -> f.createFileManager().importBundle(file)).orElseGet(() -> loadBundle(file));
+    public static Try<Bundle, Exception> loadBundle(File file) {
+        try (InputStream is = new FileInputStream(file)) {
+            return loadBundle(is);
+        } catch (Exception e) {
+            return Try.failure(e);
+        }
     }
 
-    private static Try<Bundle, Exception> loadBundle(File file) {
-        try (ZipInputStream is = new ZipInputStream(new FileInputStream(file))) {
+    public static Try<Bundle, Exception> saveBundle(File file, Bundle bundle) {
+        try (OutputStream os = new FileOutputStream(file)) {
+            return saveBundle(os, bundle).execute();
+        } catch (Exception e) {
+            return Try.failure(e);
+        }
+    }
+
+    public static Try<Bundle, Exception> loadBundle(InputStream stream) {
+        try (ZipInputStream is = new ZipInputStream(stream)) {
             return loadBundle(is).execute();
         } catch (Exception e) {
             return Try.failure(e);
         }
     }
 
-    public static Try<Bundle, Exception> saveFile(File file, Bundle bundle) {
-        return saveBundle(file, bundle);
-    }
-
-    private static Try<Bundle, Exception> saveBundle(File file, Bundle bundle) {
-        try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
-            return writeBundle(os, bundle).execute();
+    public static Try<Bundle, Exception> saveBundle(OutputStream stream, Bundle bundle) {
+        try (ZipOutputStream os = new ZipOutputStream(stream)) {
+            return saveBundle(os, bundle).execute();
         } catch (Exception e) {
             return Try.failure(e);
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static Try<Bundle, Exception> loadBundle(ZipInputStream is) {
-        return Try.of(() -> readEntries(is)).flatMap(FileManager::readManifest)
-            .flatMap(result -> tryFindFactory((String)result[1]).map(CoreFactory::createFileManager)
-            .flatMap(manager -> manager.loadEntries((List<FileManagerEntry>)result[0])));
+        return readEntries(is).flatMap(FileManager::decodeBundle);
     }
 
-    private static Try<Object[], Exception> readManifest(List<FileManagerEntry> entries) {
-        return entries.stream().filter(entry -> entry.getName().equals("manifest"))
-            .findFirst().map(manifest -> parseManifest(entries, manifest.getData()))
-            .orElseGet(() -> Try.failure(new Exception("Manifest is required")));
+    private static Try<Bundle, Exception> saveBundle(ZipOutputStream os, Bundle bundle) {
+        return encodeBundle(bundle).flatMap(entries -> writeEntries(os, entries)).map(x -> bundle);
     }
 
-    private static Try<Object[], Exception> parseManifest(List<FileManagerEntry> entries, byte[] data) {
+    public static Try<Bundle, Exception> decodeBundle(List<FileEntry> entries) {
+        return decodeManifest(entries)
+                .flatMap(manifest -> decodeScript(entries)
+                        .flatMap(script -> decodeMetadata(entries, getPluginId(manifest))
+                                .flatMap(metadata -> createBundle(getPluginId(manifest), script, metadata)
+                                        .flatMap(bundle -> decodeClips(entries)
+                                                .flatMap(clips -> createBundle(bundle, clips))
+                                        )
+                                )
+                        )
+                );
+    }
+
+    private static Try<Bundle, Exception> createBundle(String pluginId, String script, Metadata metadata) {
+        return tryFindFactory(pluginId).map(factory -> new Bundle(factory.createSession(script, metadata), List.of()));
+    }
+
+    private static Try<Bundle, Exception> createBundle(Bundle bundle, List<Clip> clips) {
+        return Try.of(() -> new Bundle(bundle.getSession(), clips));
+    }
+
+    public static Try<List<FileEntry>, Exception> encodeBundle(Bundle bundle) {
+        return encodeManifest(bundle)
+                .flatMap(manifest -> encodeScript(bundle)
+                        .flatMap(script -> encodeMetadata(bundle)
+                                .flatMap(metadata -> encodeClips(bundle)
+                                        .flatMap(clips -> createEntries(manifest, script, metadata, clips))
+                                )
+                        )
+                );
+    }
+
+    private static Try<List<FileEntry>, Exception> createEntries(FileEntry manifest, FileEntry script, FileEntry metadata, FileEntry clips) {
+        return Try.success(List.of(manifest, script, metadata, clips));
+    }
+
+    private static Try<Map<String, String>, Exception> decodeManifest(List<FileEntry> entries) {
+        return entries.stream()
+                .filter(entry -> entry.getName().equals("manifest"))
+                .findFirst()
+                .map(entry -> decodeManifest(entry.getData()))
+                .orElse(Try.failure(new Exception("Manifest entry is required")));
+    }
+
+    private static Try<String, Exception> decodeScript(List<FileEntry> entries) {
+        return entries.stream()
+                .filter(entry -> entry.getName().equals("script"))
+                .findFirst()
+                .map(entry -> decodeScript(entry.getData()))
+                .orElse(Try.failure(new Exception("Script entry is required")));
+    }
+
+    private static Try<Metadata, Exception> decodeMetadata(List<FileEntry> entries, String pluginId) {
+        return entries.stream()
+                .filter(entry -> entry.getName().equals("metadata"))
+                .findFirst()
+                .map(entry -> decodeMetadata(pluginId, entry.getData()))
+                .orElse(Try.failure(new Exception("Metadata entry is required")));
+    }
+
+    private static Try<List<Clip>, Exception> decodeClips(List<FileEntry> entries) {
+        return entries.stream()
+                .filter(entry -> entry.getName().equals("clips"))
+                .findFirst()
+                .map(entry1 -> decodeClips(entry1.getData()))
+                .orElse(Try.success(List.of()));
+    }
+
+    private static Try<Map<String, String>, Exception> decodeManifest(byte[] data) {
+        return Try.of(() -> MAPPER.readValue(data, new TypeReference<>() {}));
+    }
+
+    private static Try<String, Exception> decodeScript(byte[] data) {
+        return Try.success(new String(data));
+    }
+
+    private static Try<Metadata, Exception> decodeMetadata(String pluginId, byte[] data) {
+        return decodeMetadata(pluginId, new String(data));
+    }
+
+    private static Try<List<Clip>, Exception> decodeClips(byte[] data) {
+        return Try.of(() -> MAPPER.readTree(data)).flatMap(FileManager::decodeClips);
+    }
+
+    private static Try<List<Clip>, Exception> decodeClips(JsonNode clips) {
+        final List<Try<Clip, Exception>> results = JsonUtils.getClips(clips)
+                .map(FileManager::decodeClip)
+                .takeWhile(Try::isSuccess)
+                .toList();
+        final Optional<Try<Clip, Exception>> error = results.stream().filter(Try::isFailure).findFirst();
+        return error.<Try<List<Clip>, Exception>>map(result -> createFailure("Can't decode clips", result))
+                .orElseGet(() -> Try.success(results.stream().map(Try::get).toList()));
+    }
+
+    private static Try<Clip, Exception> decodeClip(JsonNode clip) {
+        final Map<String, Object> stateMap = new HashMap<>();
+        final List<Try<ClipEvent, Exception>> results = JsonUtils.getEvents(clip.get("events"))
+                .map(clipEvent -> decodeClipEvent(stateMap, clipEvent))
+                .takeWhile(Try::isSuccess)
+                .toList();
+        final Optional<Try<ClipEvent, Exception>> error = results.stream().filter(Try::isFailure).findFirst();
+        return error.<Try<Clip, Exception>>map(result -> createFailure("Can't decode clip", result))
+                .orElseGet(() -> Try.success(new Clip(results.stream().map(Try::get).toList())));
+    }
+
+    private static Try<ClipEvent, Exception> decodeClipEvent(Map<String, Object> stateMap, JsonNode clipEvent) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> properties = mapper.readValue(data, HashMap.class);
-            String pluginId = properties.get("pluginId");
-            return Try.success(new Object[] { entries , Objects.requireNonNull(pluginId) });
+            final String pluginId = JsonUtils.getString(clipEvent, "pluginId");
+            final String script = JsonUtils.getString(clipEvent, "script");
+            final String data = JsonUtils.getString(clipEvent, "metadata");
+            final Long date =JsonUtils. getLong(clipEvent, "date");
+
+            if (pluginId != null) {
+                stateMap.put("pluginId", pluginId);
+            }
+
+            if (script != null) {
+                stateMap.put("script", script);
+            }
+
+            final Metadata metadata = data != null ? decodeMetadata((String) stateMap.get("pluginId"), new String(data.getBytes())).orThrow() : null;
+
+            if (metadata != null) {
+                stateMap.put("metadata", metadata);
+            }
+
+            if (date != null) {
+                stateMap.put("date", new Date(date));
+            }
+
+            return Try.success(new ClipEvent((Date) stateMap.get("date"), (String) stateMap.get("pluginId"), (String) stateMap.get("script"), (Metadata) stateMap.get("metadata")));
         } catch (Exception e) {
-            return Try.failure(new Exception("Plugin id not defined"));
+            return Try.failure(e);
         }
     }
 
-    private static List<FileManagerEntry> readEntries(ZipInputStream is) throws IOException {
-        LinkedList<FileManagerEntry> entries = new LinkedList<>();
-        for (ZipEntry entry = is.getNextEntry(); entry != null; entry = is.getNextEntry()) entries.add(readEntry(is, entry));
-        return entries;
+    private static Try<FileEntry, Exception> encodeManifest(Bundle bundle) {
+        return encodeManifest(bundle.getSession()).map(entry -> new FileEntry("manifest", entry));
     }
 
-    private static FileManagerEntry readEntry(ZipInputStream is, ZipEntry entry) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        copyBytes(is, baos);
-        return new FileManagerEntry(entry.getName(), baos.toByteArray());
+    private static Try<FileEntry, Exception> encodeScript(Bundle bundle) {
+        return encodeScript(bundle.getSession()).map(entry -> new FileEntry("script", entry));
     }
 
-    private static void copyBytes(InputStream is, OutputStream os) throws IOException {
-        byte[] data = new byte[4096];
-        int length = 0;
-        while ((length = is.read(data)) > 0) {
-            os.write(data, 0, length);
+    private static Try<FileEntry, Exception> encodeMetadata(Bundle bundle) {
+        return encodeMetadata(bundle.getSession()).map(entry -> new FileEntry("metadata", entry));
+    }
+
+    private static Try<FileEntry, Exception> encodeClips(Bundle bundle) {
+        return encodeClips(bundle.getSession(), bundle.getClips()).map(entry -> new FileEntry("clips", entry));
+    }
+
+    private static Try<byte[], Exception> encodeManifest(Session session) {
+        return Try.of(() -> MAPPER.writeValueAsBytes(new FileManifest(session.getPluginId())));
+    }
+
+    private static Try<byte[], Exception> encodeScript(Session session) {
+        return Try.of(() -> session.getScript().getBytes());
+    }
+
+    private static Try<byte[], Exception> encodeMetadata(Session session) {
+        return encodeMetadata(session.getPluginId(), session.getMetadata()).map(String::getBytes);
+    }
+
+    private static Try<byte[], Exception> encodeClips(Session session, List<Clip> clips) {
+        return encodeClips(clips).flatMap(data -> Try.of(() -> MAPPER.writeValueAsBytes(data)));
+    }
+
+    private static Try<Object, Exception> encodeClips(List<Clip> clips) {
+        final List<Try<Object, Exception>> results = clips.stream()
+                .map(FileManager::encodeClip)
+                .takeWhile(Try::isSuccess)
+                .toList();
+        final Optional<Try<Object, Exception>> error = results.stream().filter(Try::isFailure).findFirst();
+        return error.map(result -> createFailure("Can't encode clips", result))
+                .orElseGet(() -> Try.success(results.stream().map(Try::get).toList()));
+    }
+
+    private static Try<Object, Exception> encodeClip(Clip clip) {
+        final Map<String, Object> stateMap = new HashMap<>();
+        final List<Try<Object, Exception>> results = clip.getEvents().stream()
+                .map(clipEvent -> encodeClipEvent(stateMap, clipEvent))
+                .takeWhile(Try::isSuccess)
+                .toList();
+        final Optional<Try<Object, Exception>> error = results.stream().filter(Try::isFailure).findFirst();
+        return error.map(result -> createFailure("Can't encode clip", result))
+                .orElseGet(() -> Try.success(Map.of("events", results.stream().map(Try::get).toList())));
+    }
+
+    private static Try<Object, Exception> encodeClipEvent(Map<String, Object> stateMap, ClipEvent clipEvent) {
+        try {
+            final Map<String, Object> eventMap = new HashMap<>();
+
+            if (!clipEvent.getPluginId().equals(stateMap.get("pluginId"))) {
+                eventMap.put("pluginId", clipEvent.getPluginId());
+            }
+
+            if (!clipEvent.getScript().equals(stateMap.get("script"))) {
+                eventMap.put("script", clipEvent.getScript());
+            }
+
+            final String metadata = encodeMetadata(clipEvent.getPluginId(), clipEvent.getMetadata()).orThrow();
+
+            if (!metadata.equals(stateMap.get("metadata"))) {
+                eventMap.put("metadata", metadata);
+            }
+
+            final Long date = clipEvent.getDate().getTime();
+
+            if (!date.equals(stateMap.get("date"))) {
+                eventMap.put("date", date);
+            }
+
+            stateMap.putAll(eventMap);
+
+            return Try.success(eventMap);
+        } catch (Exception e) {
+            return Try.failure(e);
         }
     }
 
-    private static Try<Bundle, Exception> writeBundle(ZipOutputStream os, Bundle bundle) {
-        return tryFindFactory(bundle.getSession().getPluginId()).map(CoreFactory::createFileManager)
-            .flatMap(manager -> manager.saveEntries(bundle).flatMap(entries -> putEntries(os, bundle, entries)));
+    private static Try<Metadata, Exception> decodeMetadata(String pluginId, String metadata) {
+        return tryFindFactory(pluginId).flatMap(factory -> Try.of(() -> factory.createMetadataCodec().decodeMetadata(metadata)));
     }
 
-    private static Try<Bundle, Exception> putEntries(ZipOutputStream os, Bundle bundle, List<FileManagerEntry> entries) {
-        return entries.stream().map(entry -> Try.of(() -> putEntry(os, bundle, entry)))
-            .filter(Try::isFailure).findFirst().orElse(Try.success(bundle));
+    private static Try<String, Exception> encodeMetadata(String pluginId, Metadata metadata) {
+        return tryFindFactory(pluginId).flatMap(factory -> Try.of(() -> factory.createMetadataCodec().encodeMetadata(metadata)));
     }
 
-    private static Bundle putEntry(ZipOutputStream os, Bundle bundle, FileManagerEntry entry) throws IOException {
-        ZipEntry zipEntry = new ZipEntry(entry.getName());
+    private static Try<List<FileEntry>, Exception> readEntries(ZipInputStream is) {
+        try {
+            final List<FileEntry> entries = new LinkedList<>();
+            for (ZipEntry entry = is.getNextEntry(); entry != null; entry = is.getNextEntry())
+                entries.add(readEntry(is, entry));
+            return Try.success(entries);
+        } catch (Exception e) {
+            return Try.failure(e);
+        }
+    }
+
+    private static FileEntry readEntry(ZipInputStream is, ZipEntry entry) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            IOUtils.copyBytes(is, baos);
+            return new FileEntry(entry.getName(), baos.toByteArray());
+        }
+    }
+
+    private static Try<Void, Exception> writeEntries(ZipOutputStream os, List<FileEntry> entries) {
+        return entries.stream()
+                .map(entry -> Try.of(() -> writeEntry(os, entry)))
+                .filter(Try::isFailure)
+                .findFirst()
+                .orElseGet(() -> Try.success(null));
+    }
+
+    private static Void writeEntry(ZipOutputStream os, FileEntry entry) throws IOException {
+        final ZipEntry zipEntry = new ZipEntry(entry.getName());
         os.putNextEntry(zipEntry);
         os.write(entry.getData());
         os.closeEntry();
-        return bundle;
+        return null;
     }
 
-    protected Try<byte[], Exception> encodeClips(List<Clip> clips) {
-        List<Try<List<Map<String, Object>>, Exception>> result = clips.stream().map(this::encodeClip).toList();
-
-        return result.stream().filter(Try::isFailure).findFirst().map(this::encodeClipsFailure)
-            .orElseGet(() -> Try.success(result.stream().map(Try::get).collect(Collectors.toList()))).flatMap(this::writeEncodedClips);
+    private static String getPluginId(Map<String, String> manifest) {
+        return manifest.getOrDefault("pluginId", "");
     }
 
-    private Try<byte[], Exception> writeEncodedClips(List<List<Map<String, Object>>> list) {
-        return Try.of(() -> new ObjectMapper().writeValueAsBytes(list));
+    private static <T> Try<T, Exception> createFailure(String message, Try<?, Exception> error) {
+        final Exception[] cause = new Exception[1];
+        error.ifFailure(e -> cause[0] = e);
+        return Try.failure(new RuntimeException(message, cause[0]));
     }
-
-    private Try<List<Map<String, Object>>, Exception> encodeClip(Clip decodedClip) {
-        Map<String, Object> lastMap = new HashMap<>();
-
-        boolean[] stop = new boolean[] { false };
-
-        List<Try<Map<String, Object>, Exception>> encodedEvents = decodedClip.events().filter(x -> !stop[0])
-            .map(decodedEvent -> Try.of(() -> encodeEvent(lastMap, decodedEvent)).onFailure(x -> stop[0] = true).execute()).toList();
-
-        return encodedEvents.stream().filter(Try::isFailure).findFirst().map(this::encodeClipFailure)
-            .orElseGet(() -> Try.success(encodedEvents.stream().map(Try::get).collect(Collectors.toList())));
-    }
-
-    protected Try<List<List<Map<String, Object>>>, Exception> encodeClipsFailure(Try<List<Map<String, Object>>, Exception> result) {
-        Exception[] error = new Exception[1];
-        result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Can't encode clips", error[0]));
-    }
-
-    protected Try<List<Map<String, Object>>, Exception> encodeClipFailure(Try<Map<String, Object>, Exception> result) {
-        Exception[] error = new Exception[1];
-        result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Can't encode clip", error[0]));
-    }
-
-    private Map<String, Object> encodeEvent(Map<String, Object> lastMap, ClipEvent event) throws Exception {
-        Map<String, Object> eventMap = new HashMap<>();
-
-        if (!event.getPluginId().equals(lastMap.get("pluginId"))) {
-            eventMap.put("pluginId", event.getPluginId());
-        }
-
-        if (!event.getScript().equals(lastMap.get("script"))) {
-            eventMap.put("script", event.getScript());
-        }
-
-        String metadata = encodeMetadata(event.getMetadata());
-
-        if (!metadata.equals(lastMap.get("metadata"))) {
-            eventMap.put("metadata", metadata);
-        }
-
-        Long time = event.getDate().getTime();
-
-        if (!time.equals(lastMap.get("date"))) {
-            eventMap.put("date", time);
-        }
-
-        lastMap.putAll(eventMap);
-
-        return eventMap;
-    }
-
-    protected Try<List<Clip>, Exception> decodeClips(byte[] data) {
-        Try<List<Try<Clip, Exception>>, Exception> result = readEncodedClips(data)
-            .map(encodedClips -> encodedClips.stream().map(this::decodeClip).collect(Collectors.toList()));
-
-        return result.flatMap(decodedClips -> decodedClips.stream().filter(Try::isFailure).findFirst().map(this::decodeClipsFailure)
-            .orElseGet(() -> Try.success(new LinkedList<>(decodedClips.stream().map(Try::get).collect(Collectors.toList())))));
-    }
-
-    private Try<List<List<Map<String, Object>>>, Exception> readEncodedClips(byte[] data) {
-        return Try.of(() -> new ObjectMapper().readValue(data, new TypeReference<List<List<Map<String, Object>>>>() {}));
-    }
-
-    protected Try<Clip, Exception> decodeClip(List<Map<String, Object>> encodedClip) {
-        Map<String, Object> lastMap = new HashMap<>();
-
-        boolean[] stop = new boolean[] { false };
-
-        List<Try<ClipEvent, Exception>> decodedEvents = encodedClip.stream().filter(x -> !stop[0])
-            .map(encodedEvent -> Try.of(() -> decodeEvent(lastMap, encodedEvent)).onFailure(x -> stop[0] = true).execute()).toList();
-
-        return decodedEvents.stream().filter(Try::isFailure).findFirst().map(this::decodeClipFailure)
-            .orElseGet(() -> Try.success(new Clip(decodedEvents.stream().map(Try::get).collect(Collectors.toList()))));
-    }
-
-    private Try<List<Clip>, Exception> decodeClipsFailure(Try<Clip, Exception> result) {
-        Exception[] error = new Exception[1];
-        result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Can't decode clips", error[0]));
-    }
-
-    private Try<Clip, Exception> decodeClipFailure(Try<ClipEvent, Exception> result) {
-        Exception[] error = new Exception[1];
-        result.ifFailure(e -> error[0] = e);
-        return Try.failure(new Exception("Can't decode clip", error[0]));
-    }
-
-    private ClipEvent decodeEvent(Map<String, Object> lastMap, Map<String, Object> eventMap) throws Exception {
-        String pluginId = (String)eventMap.getOrDefault("pluginId", lastMap.get("pluginId"));
-        String script = (String)eventMap.getOrDefault("script", lastMap.get("script"));
-        String metadata = (String)eventMap.getOrDefault("metadata", lastMap.get("metadata"));
-        Long date = (Long)eventMap.getOrDefault("date", lastMap.get("date"));
-
-        lastMap.put("pluginId", pluginId);
-        lastMap.put("script", script);
-        lastMap.put("metadata", metadata);
-        lastMap.put("date", date);
-
-        return new ClipEvent(new Date(date), pluginId, script, decodeMetadata(metadata));
-    }
-
-    protected abstract Metadata decodeMetadata(String metadata) throws Exception;
-
-    protected abstract String encodeMetadata(Object metadata) throws Exception;
-
-    public abstract Try<Bundle, Exception> importBundle(File file);
-
-    public abstract boolean canImportFile(File file);
-
-    public abstract List<String> getSupportedFiles();
 }

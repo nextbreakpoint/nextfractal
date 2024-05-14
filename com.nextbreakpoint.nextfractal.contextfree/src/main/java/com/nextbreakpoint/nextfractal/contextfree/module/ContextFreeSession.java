@@ -76,6 +76,16 @@ public class ContextFreeSession extends Session {
 		return metadata;
 	}
 
+	@Override
+	public Session withSource(String source) {
+		return toBuilder().withScript(source).build();
+	}
+
+	@Override
+	public Session withMetadata(Metadata metadata) {
+		return toBuilder().withMetadata((ContextFreeMetadata) metadata).build();
+	}
+
 	private static String getInitialSource() {
 		return Try.of(() -> SessionUtils.readAll(Objects.requireNonNull(ContextFreeSession.class.getResourceAsStream("/contextfree.txt"))))
 				.onFailure(e -> logger.log(Level.WARNING, "Can't load resource /contextfree.txt"))

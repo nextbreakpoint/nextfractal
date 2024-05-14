@@ -33,7 +33,6 @@ import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
@@ -78,6 +77,16 @@ public class MandelbrotSession extends Session {
 	@Override
 	public Metadata getMetadata() {
 		return metadata;
+	}
+
+	@Override
+	public Session withSource(String source) {
+		return toBuilder().withScript(source).build();
+	}
+
+	@Override
+	public Session withMetadata(Metadata metadata) {
+		return toBuilder().withMetadata((MandelbrotMetadata) metadata).build();
 	}
 
 	private static String getInitialScript() {

@@ -112,7 +112,7 @@ public class PlaybackPane extends Pane {
         stop();
         frameIndex = 0;
         lastFrame = null;
-        future = executor.scheduleAtFixedRate(() -> playNextFrame(), 0, 1000 / FRAMES_PER_SECOND, TimeUnit.MILLISECONDS);
+        future = executor.scheduleAtFixedRate(this::playNextFrame, 0, 1000 / FRAMES_PER_SECOND, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {

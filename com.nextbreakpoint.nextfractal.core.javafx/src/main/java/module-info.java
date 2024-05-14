@@ -35,9 +35,9 @@ module com.nextbreakpoint.nextfractal.core.javafx {
     exports com.nextbreakpoint.nextfractal.core.javafx.event;
     exports com.nextbreakpoint.nextfractal.core.javafx.editor;
     exports com.nextbreakpoint.nextfractal.core.javafx.render;
+    exports com.nextbreakpoint.nextfractal.core.javafx.viewer;
     exports com.nextbreakpoint.nextfractal.core.javafx.params;
     exports com.nextbreakpoint.nextfractal.core.javafx.params.editors;
-    exports com.nextbreakpoint.nextfractal.core.javafx.viewer;
     uses com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
     uses com.nextbreakpoint.nextfractal.core.javafx.AttributeEditorFactory;
     provides com.nextbreakpoint.nextfractal.core.javafx.AttributeEditorFactory with DoubleAttributeEditorFactory;

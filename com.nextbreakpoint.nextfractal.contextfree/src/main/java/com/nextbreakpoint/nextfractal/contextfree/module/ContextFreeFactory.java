@@ -26,14 +26,15 @@ package com.nextbreakpoint.nextfractal.contextfree.module;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
-import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.common.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.MetadataCodec;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
+import java.util.Objects;
 import java.util.concurrent.ThreadFactory;
 
 public class ContextFreeFactory implements CoreFactory {
@@ -78,12 +79,12 @@ public class ContextFreeFactory implements CoreFactory {
 	}
 
 	@Override
-	public FileManager createFileManager() {
-		return new ContextFreeFileManager();
+	public MetadataCodec createMetadataCodec() {
+		return new ContextFreeMetadataCodec();
 	}
 
 	@Override
 	public Try<String, Exception> loadResource(String resourceName) {
-		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
+		return Try.of(() -> Objects.requireNonNull(getClass().getResource(resourceName)).toExternalForm());
 	}
 }

@@ -30,12 +30,14 @@ import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
+import com.nextbreakpoint.nextfractal.core.event.EditorReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.HideControlsFired;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
-import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.SessionReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
@@ -85,8 +87,6 @@ public class Viewer extends BorderPane {
 		this.eventBus = eventBus;
 		this.width = width;
 		this.height = height;
-
-		setDisabled(true);
 
 		errorProperty = new BooleanObservableValue();
 		errorProperty.setValue(false);
@@ -184,11 +184,6 @@ public class Viewer extends BorderPane {
 			errors.setVisible(newValue);
 		});
 
-		heightProperty().addListener((observable, oldValue, newValue) -> {
-			//TODO set toolbar height
-//            toolbar.setPrefHeight(newValue.doubleValue() * 0.07);
-		});
-
 		eventBus.subscribe(ActiveToolChanged.class.getSimpleName(), event -> {
 			if (renderingContext != null) {
 				renderingContext.setTool(((ActiveToolChanged) event).tool());
@@ -213,15 +208,15 @@ public class Viewer extends BorderPane {
 			}
 		});
 
-//        eventBus.subscribe(RenderDataChanged.class.getSimpleName(), event -> handleSessionChanged((MandelbrotSession) ((RenderDataChanged) event).session(), ((RenderDataChanged) event).continuous()));
-//        eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> handleSessionChanged((MandelbrotSession) ((PlaybackDataChanged) event).session(), ((PlaybackDataChanged) event).continuous()));
+		eventBus.subscribe(EditorReportChanged.class.getSimpleName(), event -> {
+            handleReportChanged(((EditorReportChanged) event).session(), ((EditorReportChanged) event).continuous(), ((EditorReportChanged) event).result());
+			//TODO coordinator errors are not displayed in status panel
+//            eventBus.postEvent(SessionErrorChanged.builder().error(message).build());
+//            eventBus.postEvent(SessionStatusChanged.builder().status(message).build());
+		});
 
-		eventBus.subscribe(SessionReportChanged.class.getSimpleName(), event -> {
-			final ParserResult report = ((SessionReportChanged) event).result();
-			if (renderingStrategy != null) {
-				final List<SourceError> errorList = renderingStrategy.updateCoordinators(report.result());
-				errorProperty.setValue(!errorList.isEmpty());
-			}
+		eventBus.subscribe(PlaybackReportChanged.class.getSimpleName(), event -> {
+            handleReportChanged(((PlaybackReportChanged) event).session(), ((PlaybackReportChanged) event).continuous(), ((PlaybackReportChanged) event).result());
 			//TODO coordinator errors are not displayed in status panel
 //            eventBus.postEvent(SessionErrorChanged.builder().error(message).build());
 //            eventBus.postEvent(SessionStatusChanged.builder().status(message).build());
@@ -229,7 +224,7 @@ public class Viewer extends BorderPane {
 
 		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> handleSessionTerminated());
 
-		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionLoaded(((SessionDataLoaded) event).session(), ((SessionDataLoaded) event).continuous()));
+//		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionLoaded(((SessionDataLoaded) event).session(), ((SessionDataLoaded) event).continuous()));
 		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> handleSessionChanged(((SessionDataChanged) event).session(), ((SessionDataChanged) event).continuous()));
 
 		eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> toolbar.setCaptureEnabled(true));
@@ -239,6 +234,9 @@ public class Viewer extends BorderPane {
 
 		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> toolbar.setAnimationEnabled(false));
 
+//		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> handleSessionLoaded(((PlaybackDataLoaded) event).session(), ((PlaybackDataLoaded) event).continuous()));
+		eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> handleSessionChanged(((PlaybackDataChanged) event).session(), ((PlaybackDataChanged) event).continuous()));
+
 		eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> toolbar.setDisable(true));
 		eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> toolbar.setDisable(false));
 
@@ -247,8 +245,9 @@ public class Viewer extends BorderPane {
 		startAnimationTimer();
 	}
 
-	private void handleSessionLoaded(Session session, Boolean continuous) {
+	private void handleReportChanged(Session session, Boolean continuous, ParserResult report) {
 		if (factory == null || !this.session.getPluginId().equals(session.getPluginId())) {
+			// session is being used in the constructors of the strategy classes
 			this.session = session;
 
 			onSessionChanged(session);
@@ -260,17 +259,20 @@ public class Viewer extends BorderPane {
 			toolbar.bindSession(session);
 		}
 
-		if (delegate != null) {
+		if (delegate != null && renderingContext != null) {
 			delegate.updateRenderingContext(renderingContext);
 		}
 
 		if (renderingStrategy != null) {
-			renderingStrategy.updateCoordinators(session, continuous, renderingContext.isTimeAnimation());
+			final List<SourceError> errorList = renderingStrategy.updateCoordinators(report.result());
+
+			errorProperty.setValue(!errorList.isEmpty());
 		}
 	}
 
 	private void handleSessionChanged(Session session, Boolean continuous) {
 		if (factory == null || !this.session.getPluginId().equals(session.getPluginId())) {
+			// session is being used in the constructors of the strategy classes
 			this.session = session;
 
 			onSessionChanged(session);
@@ -282,27 +284,28 @@ public class Viewer extends BorderPane {
 			toolbar.bindSession(session);
 		}
 
-		if (delegate != null) {
+		if (delegate != null && renderingContext != null) {
 			delegate.updateRenderingContext(renderingContext);
 		}
 
-		if (renderingStrategy != null) {
+		if (renderingStrategy != null && renderingContext != null) {
 			renderingStrategy.updateCoordinators(session, continuous, renderingContext.isTimeAnimation());
 		}
 	}
 
 	private void onSessionChanged(Session session) {
-		controls.setBottom(null);
-		viewer.setCenter(null);
-
 		if (keyHandler != null) {
 			controls.removeEventHandler(KeyEvent.KEY_RELEASED, keyHandler);
 			keyHandler = null;
 		}
 
+		controls.setBottom(null);
+		viewer.setCenter(null);
+
 		if (renderingStrategy != null) {
-			renderingStrategy.disposeCoordinators();
+			final var strategy = renderingStrategy;
 			renderingStrategy = null;
+			strategy.disposeCoordinators();
 		}
 
 		if (renderingContext != null) {
@@ -312,9 +315,7 @@ public class Viewer extends BorderPane {
 
 		delegate = null;
 
-		factory = tryFindFactory(session.getPluginId())
-				.onSuccess(factory -> setDisabled(false))
-				.orElse(null);
+		factory = tryFindFactory(session.getPluginId()).orElse(null);
 
 		if (factory == null) {
 			return;
@@ -326,7 +327,7 @@ public class Viewer extends BorderPane {
 			return;
 		}
 
-		delegate = factory.createMetadataDelegate(eventBus, () -> Viewer.this.session);
+		delegate = factory.createMetadataDelegate(eventBus::postEvent, () -> Viewer.this.session);
 
 		if (delegate == null) {
 			return;
@@ -340,10 +341,11 @@ public class Viewer extends BorderPane {
 
 		final var toolContext = factory.createToolContext(renderingContext, renderingStrategy, delegate, width, height);
 
-		toolbar = factory.createToolbar(eventBus, delegate, toolContext);
+		toolbar = factory.createToolbar(eventBus::postEvent, delegate, toolContext);
 
 		if (toolbar != null) {
 			toolbar.setOpacity(0.9);
+            toolbar.setPrefHeight(getHeight() * 0.07);
 
 			controls.setBottom(toolbar);
 		}

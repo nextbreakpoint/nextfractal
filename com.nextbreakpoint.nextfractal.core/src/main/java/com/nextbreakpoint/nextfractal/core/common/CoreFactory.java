@@ -71,7 +71,7 @@ public interface CoreFactory {
 	/**
 	 * @return
 	 */
-	public FileManager createFileManager();
+	public MetadataCodec createMetadataCodec();
 
 	/**
 	 * @param resourceName

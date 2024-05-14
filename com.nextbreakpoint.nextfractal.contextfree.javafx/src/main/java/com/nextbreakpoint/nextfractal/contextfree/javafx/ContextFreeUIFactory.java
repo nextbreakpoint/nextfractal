@@ -38,12 +38,13 @@ import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
 import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.common.TileUtils;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBusPublisher;
 import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javafx.KeyHandler;
 import com.nextbreakpoint.nextfractal.core.javafx.MetadataDelegate;
-import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.RenderingContext;
 import com.nextbreakpoint.nextfractal.core.javafx.RenderingStrategy;
 import com.nextbreakpoint.nextfractal.core.javafx.ToolContext;
@@ -72,7 +73,7 @@ public class ContextFreeUIFactory implements UIFactory {
 	@Override
 	public GridItemRenderer createRenderer(Bitmap bitmap) {
 		Map<String, Integer> hints = new HashMap<String, Integer>();
-		RendererTile tile = createRendererTile(bitmap.getWidth(), bitmap.getHeight());
+		RendererTile tile = TileUtils.createRendererTile(bitmap.getWidth(), bitmap.getHeight());
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("ContextFree Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
@@ -120,8 +121,8 @@ public class ContextFreeUIFactory implements UIFactory {
 	}
 
 	@Override
-	public MetadataDelegate createMetadataDelegate(PlatformEventBus eventBus, Supplier<Session> supplier) {
-		return new ContextFreeMetadataDelegate(eventBus, supplier);
+	public MetadataDelegate createMetadataDelegate(EventBusPublisher publisher, Supplier<Session> supplier) {
+		return new ContextFreeMetadataDelegate(publisher, supplier);
 	}
 
 	@Override
@@ -140,21 +141,13 @@ public class ContextFreeUIFactory implements UIFactory {
 	}
 
 	@Override
-	public Toolbar createToolbar(PlatformEventBus eventBus, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext) {
-		return new ContextFreeToolbar(delegate, eventBus::postEvent, (ContextFreeToolContext) toolContext);
+	public Toolbar createToolbar(EventBusPublisher publisher, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext) {
+		return new ContextFreeToolbar(delegate, publisher, (ContextFreeToolContext) toolContext);
 	}
 
 	@Override
 	public ToolContext<? extends Metadata> createToolContext(RenderingContext renderingContext, RenderingStrategy renderingStrategy, MetadataDelegate delegate, int width, int height) {
 		return new ContextFreeToolContext(renderingContext, (ContextFreeRenderingStrategy) renderingStrategy, delegate, width, height);
-	}
-
-	private RendererTile createRendererTile(int width, int height) {
-        RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(width, height);
-		RendererSize tileBorder = new RendererSize(0, 0);
-		RendererPoint tileOffset = new RendererPoint(0, 0);
-        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 	}
 
 	private static class GridItemRendererAdapter implements GridItemRenderer {

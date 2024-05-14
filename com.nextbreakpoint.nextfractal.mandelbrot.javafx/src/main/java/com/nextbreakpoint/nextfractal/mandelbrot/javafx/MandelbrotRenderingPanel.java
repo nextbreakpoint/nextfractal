@@ -36,6 +36,11 @@ public class MandelbrotRenderingPanel extends Pane {
         gcFractalCanvas.setFill(javafx.scene.paint.Color.WHITESMOKE);
         gcFractalCanvas.fillRect(0, 0, width, height);
 
+        Canvas toolCanvas = new Canvas(width, height);
+        GraphicsContext gcToolCanvas = toolCanvas.getGraphicsContext2D();
+        gcToolCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        gcToolCanvas.fillRect(0, 0, width, height);
+
         Canvas orbitCanvas = new Canvas(width, height);
         GraphicsContext gcOrbitCanvas = orbitCanvas.getGraphicsContext2D();
         gcOrbitCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
@@ -53,11 +58,6 @@ public class MandelbrotRenderingPanel extends Pane {
         gcPointCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
         gcPointCanvas.fillRect(0, 0, width, height);
         pointCanvas.setVisible(false);
-
-        Canvas toolCanvas = new Canvas(width, height);
-        GraphicsContext gcToolCanvas = toolCanvas.getGraphicsContext2D();
-        gcToolCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        gcToolCanvas.fillRect(0, 0, width, height);
 
         Canvas juliaCanvas = new Canvas(width, height);
         GraphicsContext gcJuliaCanvas = juliaCanvas.getGraphicsContext2D();

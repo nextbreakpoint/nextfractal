@@ -51,8 +51,14 @@ import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.runtime.export.ExportServiceDelegate;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
+import com.nextbreakpoint.nextfractal.runtime.javafx.component.MainCentralPane;
+import com.nextbreakpoint.nextfractal.runtime.javafx.component.MainSidePane;
+import com.nextbreakpoint.nextfractal.runtime.javafx.core.ApplicationHandler;
+import com.nextbreakpoint.nextfractal.runtime.javafx.core.PlaybackSourceHandler;
+import com.nextbreakpoint.nextfractal.runtime.javafx.core.SessionSourceHandler;
+import com.nextbreakpoint.nextfractal.runtime.javafx.core.SimpleExportService;
 import com.nextbreakpoint.nextfractal.runtime.javafx.utils.ApplicationUtils;
-import com.nextbreakpoint.nextfractal.runtime.javafx.utils.ThreadUtils;
+import com.nextbreakpoint.nextfractal.core.common.ThreadUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -113,47 +119,53 @@ public class NextFractalApp extends Application {
         final ExportRenderer exportRenderer = new SimpleExportRenderer(ThreadUtils.createThreadFactory("Export Renderer"));
         final ExportService exportService = new SimpleExportService(delegate, ThreadUtils.createThreadFactory("Export Service"), exportRenderer);
 
-        final ApplicationHandler handler = new ApplicationHandler(eventBus);
+        final var applicationHandler = new ApplicationHandler(eventBus);
+        final var sessionSourceHandler = new SessionSourceHandler(eventBus);
+        final var playbackSourceHandler = new PlaybackSourceHandler(eventBus);
 
-        eventBus.subscribe(EditorGrammarSelected.class.getSimpleName(), event -> handler.handleGrammarSelected(((EditorGrammarSelected) event).grammar()));
+        eventBus.subscribe(EditorGrammarSelected.class.getSimpleName(), event -> applicationHandler.handleGrammarSelected(((EditorGrammarSelected) event).grammar()));
 
-        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> handler.handleSessionChanged(((SessionDataChanged) event).session()));
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> applicationHandler.handleSessionChanged(((SessionDataChanged) event).session()));
 
-        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> handler.handleSessionTerminate(exportService));
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> applicationHandler.handleSessionTerminate(exportService));
 
-        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> handler.handleExportSessionCreated(exportService, ((ExportSessionCreated) event).session()));
+        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> applicationHandler.handleExportSessionCreated(exportService, ((ExportSessionCreated) event).session()));
 
-        eventBus.subscribe(ExportSessionStopped.class.getSimpleName(), event -> handler.handleExportSessionStopped(exportService, ((ExportSessionStopped) event).session()));
+        eventBus.subscribe(ExportSessionStopped.class.getSimpleName(), event -> applicationHandler.handleExportSessionStopped(exportService, ((ExportSessionStopped) event).session()));
 
-        eventBus.subscribe(ExportSessionResumed.class.getSimpleName(), event -> handler.handleExportSessionResumed(exportService, ((ExportSessionResumed) event).session()));
+        eventBus.subscribe(ExportSessionResumed.class.getSimpleName(), event -> applicationHandler.handleExportSessionResumed(exportService, ((ExportSessionResumed) event).session()));
 
-        eventBus.subscribe(ExportSessionSuspended.class.getSimpleName(), event -> handler.handleExportSessionSuspended(exportService, ((ExportSessionSuspended) event).session()));
+        eventBus.subscribe(ExportSessionSuspended.class.getSimpleName(), event -> applicationHandler.handleExportSessionSuspended(exportService, ((ExportSessionSuspended) event).session()));
 
-        eventBus.subscribe(EditorLoadFileRequested.class.getSimpleName(), event -> handler.handleLoadFile(((EditorLoadFileRequested) event).file()));
+        eventBus.subscribe(EditorLoadFileRequested.class.getSimpleName(), event -> applicationHandler.handleLoadFile(((EditorLoadFileRequested) event).file()));
 
-        eventBus.subscribe(EditorSaveFileRequested.class.getSimpleName(), event -> handler.handleSaveFile(((EditorSaveFileRequested) event).file()));
+        eventBus.subscribe(EditorSaveFileRequested.class.getSimpleName(), event -> applicationHandler.handleSaveFile(((EditorSaveFileRequested) event).file()));
 
-        eventBus.subscribe(EditorStoreFileRequested.class.getSimpleName(), event -> handler.handleStoreFile(((EditorStoreFileRequested) event).file()));
+        eventBus.subscribe(EditorStoreFileRequested.class.getSimpleName(), event -> applicationHandler.handleStoreFile(((EditorStoreFileRequested) event).file()));
 
-        eventBus.subscribe(EditorDeleteFilesRequested.class.getSimpleName(), event -> handler.handleDeleteFiles(((EditorDeleteFilesRequested) event).files()));
+        eventBus.subscribe(EditorDeleteFilesRequested.class.getSimpleName(), event -> applicationHandler.handleDeleteFiles(((EditorDeleteFilesRequested) event).files()));
 
-        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> handler.handleErrorChanged(((SessionErrorChanged) event).error()));
+        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> applicationHandler.handleErrorChanged(((SessionErrorChanged) event).error()));
 
-        eventBus.subscribe(CaptureSessionActionFired.class.getSimpleName(), event -> handler.handleCaptureSession(((CaptureSessionActionFired) event).action()));
+        eventBus.subscribe(CaptureSessionActionFired.class.getSimpleName(), event -> applicationHandler.handleCaptureSession(((CaptureSessionActionFired) event).action()));
 
-        eventBus.subscribe(CaptureClipRestored.class.getSimpleName(), event -> handler.handleClipRestored(((CaptureClipRestored) event).clip()));
+        eventBus.subscribe(CaptureClipRestored.class.getSimpleName(), event -> applicationHandler.handleClipRestored(((CaptureClipRestored) event).clip()));
 
-        eventBus.subscribe(CaptureClipRemoved.class.getSimpleName(), event -> handler.handleClipRemoved(((CaptureClipRemoved) event).clip()));
+        eventBus.subscribe(CaptureClipRemoved.class.getSimpleName(), event -> applicationHandler.handleClipRemoved(((CaptureClipRemoved) event).clip()));
 
-        eventBus.subscribe(CaptureClipAdded.class.getSimpleName(), event -> handler.handleClipAdded(((CaptureClipAdded) event).clip()));
+        eventBus.subscribe(CaptureClipAdded.class.getSimpleName(), event -> applicationHandler.handleClipAdded(((CaptureClipAdded) event).clip()));
 
-        eventBus.subscribe(CaptureClipMoved.class.getSimpleName(), event -> handler.handleClipMoved(((CaptureClipMoved) event).fromIndex(), ((CaptureClipMoved) event).toIndex()));
+        eventBus.subscribe(CaptureClipMoved.class.getSimpleName(), event -> applicationHandler.handleClipMoved(((CaptureClipMoved) event).fromIndex(), ((CaptureClipMoved) event).toIndex()));
 
-        eventBus.subscribe(SessionBundleLoaded.class.getSimpleName(), event -> handler.handleBundleLoaded((SessionBundleLoaded) event));
+        eventBus.subscribe(SessionBundleLoaded.class.getSimpleName(), event -> applicationHandler.handleBundleLoaded((SessionBundleLoaded) event));
 
-        eventBus.subscribe(SessionExportRequested.class.getSimpleName(), event -> handler.handleExportSession(primaryStage, (SessionExportRequested) event));
+        eventBus.subscribe(SessionExportRequested.class.getSimpleName(), event -> applicationHandler.handleExportSession(primaryStage, (SessionExportRequested) event));
 
-        eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> handler.handleEditorAction(primaryStage, ((EditorActionFired) event).action()));
+        eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> applicationHandler.handleEditorAction(primaryStage, ((EditorActionFired) event).action()));
+
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> sessionSourceHandler.handleSessionTerminate());
+
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> playbackSourceHandler.handleSessionTerminate());
 
         final Pane mainPane = createMainPane(eventBus, editorWidth, renderSize, renderSize);
 
@@ -165,7 +177,7 @@ public class NextFractalApp extends Application {
         ApplicationUtils.loadStyleSheets(scene);
 
         primaryStage.setOnCloseRequest(e -> {
-            if (!handler.handleConfirmTerminate(exportService)) {
+            if (!applicationHandler.handleConfirmTerminate(exportService)) {
                 e.consume();
             }
         });
@@ -178,7 +190,7 @@ public class NextFractalApp extends Application {
 
         // the following events are required to initialise the application
         Platform.runLater(() -> eventBus.postEvent(WorkspaceChanged.builder().file(workspace).build()));
-        Platform.runLater(() -> handler.handleGrammarSelected(System.getProperty("com.nextbreakpoint.nextfractal.default.grammar", DEFAULT_PLUGIN_ID)));
+        Platform.runLater(() -> applicationHandler.handleGrammarSelected(System.getProperty("com.nextbreakpoint.nextfractal.default.grammar", DEFAULT_PLUGIN_ID)));
     }
 
     private Pane createMainPane(PlatformEventBus eventBus, int editorWidth, int renderWidth, int height) {

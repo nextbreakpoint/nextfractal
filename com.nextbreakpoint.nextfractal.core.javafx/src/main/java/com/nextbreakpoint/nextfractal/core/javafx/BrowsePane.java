@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
-import com.nextbreakpoint.nextfractal.core.common.Plugins;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -94,8 +93,6 @@ public class BrowsePane extends BorderPane {
         setPrefHeight(height);
 
         filter.add(".nf.zip");
-
-        Plugins.factories().forEach(f -> filter.addAll(f.createFileManager().getSupportedFiles()));
 
         sourcePathProperty = new StringObservableValue();
 
@@ -371,7 +368,7 @@ public class BrowsePane extends BorderPane {
     }
 
     private void copyFile(File file, File location) {
-        FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(createFileName(file, location), session));
+        FileManager.loadBundle(file).ifPresent(session -> FileManager.saveBundle(createFileName(file, location), session));
     }
 
     private File createFileName(File file, File location) {

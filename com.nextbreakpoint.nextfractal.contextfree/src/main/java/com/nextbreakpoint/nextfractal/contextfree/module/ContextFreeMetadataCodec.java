@@ -22,25 +22,26 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.common;
+package com.nextbreakpoint.nextfractal.contextfree.module;
 
-import java.util.Objects;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.MetadataCodec;
 
-public class FileManagerEntry {
-    private final String name;
-    private final byte[] data;
+public class ContextFreeMetadataCodec implements MetadataCodec {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public FileManagerEntry(String name, byte[] data) {
-        this.name = Objects.requireNonNull(name);
-        this.data = Objects.requireNonNull(data);
+    @Override
+    public Metadata decodeMetadata(String metadata) throws Exception {
+        return MAPPER.readValue(metadata, ContextFreeMetadata.class);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    //TODO shall we return an immutable object?
-    public byte[] getData() {
-        return data;
+    @Override
+    public String encodeMetadata(Object metadata) throws Exception {
+        if (metadata instanceof ContextFreeMetadata) {
+            return MAPPER.writeValueAsString(metadata);
+        } else {
+            throw new IllegalStateException("Unexpected class: " + metadata.getClass());
+        }
     }
 }

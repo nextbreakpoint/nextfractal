@@ -29,19 +29,15 @@ import javafx.application.Platform;
 
 public class PlatformEventBus extends EventBus {
     public PlatformEventBus(String name) {
-        this(name, null);
-    }
-
-    public PlatformEventBus(String name, PlatformEventBus parent) {
-        super(name, parent);
+        super(name);
     }
 
     @Override
     public void postEvent(Object event) {
-        if (Platform.isFxApplicationThread()) {
-            processEvent(event.getClass().getSimpleName(), event);
-        } else {
-            throw new IllegalStateException("post event must be invoked from JavaFX main thread");
+        if (!Platform.isFxApplicationThread()) {
+            throw new IllegalStateException("Event must be posted from JavaFX main thread");
         }
+
+        postEvent(event.getClass().getSimpleName(), event);
     }
 }

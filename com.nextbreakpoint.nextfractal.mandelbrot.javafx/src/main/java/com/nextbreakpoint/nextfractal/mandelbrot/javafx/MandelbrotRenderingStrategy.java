@@ -30,6 +30,7 @@ import com.nextbreakpoint.nextfractal.core.common.Double4D;
 import com.nextbreakpoint.nextfractal.core.common.Integer4D;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
+import com.nextbreakpoint.nextfractal.core.common.TileUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
 import com.nextbreakpoint.nextfractal.core.javafx.MetadataDelegate;
 import com.nextbreakpoint.nextfractal.core.javafx.RenderingContext;
@@ -37,8 +38,6 @@ import com.nextbreakpoint.nextfractal.core.javafx.RenderingStrategy;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.CompilerException;
@@ -100,7 +99,7 @@ public class MandelbrotRenderingStrategy implements RenderingStrategy {
         coordinators = createCoordinators(rows, columns, hints);
 
         final Map<String, Integer> juliaHints = Map.of(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-        juliaCoordinator = createJuliaRendererCoordinator(juliaHints, createSingleTile(200, 200));
+        juliaCoordinator = createJuliaRendererCoordinator(juliaHints, TileUtils.createRendererTile(200, 200));
     }
 
     public Number getInitialCenter() {
@@ -327,7 +326,8 @@ public class MandelbrotRenderingStrategy implements RenderingStrategy {
         final RendererCoordinator[] coordinators = new RendererCoordinator[rows * columns];
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {
-                final RendererCoordinator rendererCoordinator = createRendererCoordinator(hints, createTile(row, column));
+                final RendererTile tile = TileUtils.createRendererTile(width, height, rows, columns, row, column);
+                final RendererCoordinator rendererCoordinator = createRendererCoordinator(hints, tile);
                 coordinators[row * columns + column] = rendererCoordinator;
             }
         }
@@ -367,26 +367,6 @@ public class MandelbrotRenderingStrategy implements RenderingStrategy {
 
     private DefaultThreadFactory createThreadFactory(String name, int priority) {
         return new DefaultThreadFactory(name, true, priority);
-    }
-
-    //TODO move to utility class
-    private RendererTile createTile(int row, int column) {
-        int tileWidth = Math.round((float) width / (float) columns);
-        int tileHeight = Math.round((float) height / (float) rows);
-        RendererSize imageSize = new RendererSize(width, height);
-        RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
-        RendererSize tileBorder = new RendererSize(0, 0);
-        RendererPoint tileOffset = new RendererPoint(Math.round(((float) column * (float) width) / (float) columns), Math.round(((float) row * (float) height) / (float) rows));
-        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-    }
-
-    //TODO move to utility class
-    private RendererTile createSingleTile(int width, int height) {
-        RendererSize imageSize = new RendererSize(width, height);
-        RendererSize tileSize = new RendererSize(width, height);
-        RendererSize tileBorder = new RendererSize(0, 0);
-        RendererPoint tileOffset = new RendererPoint(0, 0);
-        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
     }
 
     private boolean[] createOrbitAndColor(DSLParserResult result) throws ParserException, CompilerException {

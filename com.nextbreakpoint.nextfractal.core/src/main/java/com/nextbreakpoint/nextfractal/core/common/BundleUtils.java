@@ -22,16 +22,21 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.javafx;
+package com.nextbreakpoint.nextfractal.core.common;
 
-import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
-import com.nextbreakpoint.nextfractal.core.javafx.viewer.Viewer;
-import javafx.scene.layout.BorderPane;
-import lombok.extern.java.Log;
+import java.util.Arrays;
+import java.util.List;
 
-@Log
-public class MainRenderPane extends BorderPane {
-    public MainRenderPane(PlatformEventBus eventBus, int width, int height) {
-        setCenter(new Viewer(eventBus, width, height));
+public class BundleUtils {
+    private BundleUtils() {}
+
+    public static Bundle createBundle(String manifest, String metadata, String script) throws Exception {
+        final FileEntry manifestEntry = new FileEntry("manifest", manifest.getBytes());
+        final FileEntry metadataEntry = new FileEntry("metadata", metadata.getBytes());
+        final FileEntry scriptEntry = new FileEntry("script", script.getBytes());
+
+        final List<FileEntry> entries = Arrays.asList(manifestEntry, metadataEntry, scriptEntry);
+
+        return FileManager.decodeBundle(entries).orThrow();
     }
 }

@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.javafx;
+package com.nextbreakpoint.nextfractal.runtime.javafx.core;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.encode.EncoderException;

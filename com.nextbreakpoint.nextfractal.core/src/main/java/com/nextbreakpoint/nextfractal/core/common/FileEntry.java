@@ -24,16 +24,23 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
-public abstract class Session {
-	public abstract String getPluginId();
+import java.util.Objects;
 
-	public abstract String getGrammar();
+public class FileEntry {
+    private final String name;
+    private final byte[] data;
 
-	public abstract String getScript();
+    public FileEntry(String name, byte[] data) {
+        this.name = Objects.requireNonNull(name);
+        this.data = Objects.requireNonNull(data);
+    }
 
-	public abstract Metadata getMetadata();
+    public String getName() {
+        return name;
+    }
 
-	public abstract Session withSource(String source);
-
-	public abstract Session withMetadata(Metadata metadata);
+    //TODO shall we return an immutable object?
+    public byte[] getData() {
+        return data;
+    }
 }

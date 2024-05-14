@@ -78,11 +78,11 @@ public interface UIFactory {
 	RenderingContext createRenderingContext();
 
 	/**
-	 * @param eventBus
+	 * @param publisher
 	 * @param supplier
 	 * @return
 	 */
-	MetadataDelegate createMetadataDelegate(PlatformEventBus eventBus, Supplier<Session> supplier);
+	MetadataDelegate createMetadataDelegate(EventBusPublisher publisher, Supplier<Session> supplier);
 
 	/**
 	 * @param renderingContext
@@ -109,12 +109,12 @@ public interface UIFactory {
 	Pane createRenderingPanel(RenderingContext renderingContext, int width, int height);
 
 	/**
-	 * @param eventBus
+	 * @param publisher
 	 * @param delegate
 	 * @param toolContext
 	 * @return
 	 */
-	Toolbar createToolbar(PlatformEventBus eventBus, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext);
+	Toolbar createToolbar(EventBusPublisher publisher, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext);
 
 	/**
 	 * @param renderingContext

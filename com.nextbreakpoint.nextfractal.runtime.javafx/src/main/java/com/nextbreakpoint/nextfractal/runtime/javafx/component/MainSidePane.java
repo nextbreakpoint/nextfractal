@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.javafx;
+package com.nextbreakpoint.nextfractal.runtime.javafx.component;
 
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipAdded;
@@ -65,7 +65,7 @@ import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.editor.ScriptEditor;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.runtime.javafx.utils.TileUtils;
+import com.nextbreakpoint.nextfractal.core.common.TileUtils;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

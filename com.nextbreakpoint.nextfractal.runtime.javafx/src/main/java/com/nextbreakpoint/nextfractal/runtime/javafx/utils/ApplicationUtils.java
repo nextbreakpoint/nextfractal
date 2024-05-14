@@ -51,7 +51,7 @@ public class ApplicationUtils {
     }
 
     public static Try<BrowseBitmap, Exception> createBitmap(File file, RendererSize size) {
-        return FileManager.loadFile(file).flatMap(bundle -> tryFindFactory(bundle.getSession().getPluginId())
+        return FileManager.loadBundle(file).flatMap(bundle -> tryFindFactory(bundle.getSession().getPluginId())
                 .flatMap(factory -> Try.of(() -> factory.createBitmap(bundle.getSession(), size))));
     }
 

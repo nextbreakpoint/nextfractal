@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.core.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -35,22 +34,10 @@ import java.util.logging.Logger;
 public abstract class EventBus {
     private static final Logger logger = Logger.getLogger(EventBus.class.getName());
     private final Map<String, List<EventListener>> listeners = new HashMap<>();
-    private final List<EventBus> children = new LinkedList<>();
-    private final EventBus parent;
     private final String name;
-    private volatile boolean disabled;
 
     public EventBus(String name) {
-        this(name, null);
-    }
-
-    //TODO remove support for parent bus
-    public EventBus(String name, EventBus parent) {
         this.name = name;
-        this.parent = parent;
-        if (parent != null) {
-            parent.children.add(this);
-        }
     }
 
     public final void subscribe(String channel, EventListener listener) {
@@ -74,34 +61,19 @@ public abstract class EventBus {
 
     public abstract void postEvent(Object event);
 
-    protected final void processEvent(String channel, Object event) {
+    protected final void postEvent(String channel, Object event) {
         try {
-            logger.log(Level.FINE, "Event posted on bus: " + name + ", channel: " + channel + ": " + event.toString());
-            if (parent != null) {
-                parent.processEvent(channel, event);
-            } else {
-                dispatchEvent(channel, event);
-            }
+            dispatchEvent(channel, event);
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Error while propagating event", e);
+            logger.log(Level.WARNING, "Can't process event", e);
         }
     }
 
     private void dispatchEvent(String channel, Object event) {
-        if (disabled) return;
-        logger.log(Level.FINE, "Event dispatched to bus: " + name + ", channel: " + channel);
+        logger.log(Level.FINE, "Dispatching event: bus: " + name + ", channel: " + channel + ": " + event.toString());
         List<EventListener> listeners = this.listeners.get(channel);
         if (listeners != null) {
             listeners.forEach(listener -> listener.onEvent(event));
         }
-        children.forEach(child -> child.dispatchEvent(channel, event));
-    }
-
-    public final void disable() {
-        disabled = true;
-    }
-
-    public final void enable() {
-        disabled = false;
     }
 }

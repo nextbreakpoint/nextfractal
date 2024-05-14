@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.javafx;
+package com.nextbreakpoint.nextfractal.runtime.javafx.core;
 
 import com.nextbreakpoint.nextfractal.core.common.Bundle;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
@@ -40,6 +40,7 @@ import com.nextbreakpoint.nextfractal.core.event.CurrentFileChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
+import com.nextbreakpoint.nextfractal.core.event.EditorReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorSaveFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.EditorStoreFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionCreated;
@@ -111,6 +112,7 @@ public class ApplicationHandler {
 
         eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> session = ((PlaybackDataLoaded) event).session());
         eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> session = ((PlaybackDataChanged) event).session());
+
         eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> handlePlaybackStopped());
 
         eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> handleEditorActionFired(((EditorActionFired) event).action()));
@@ -129,13 +131,15 @@ public class ApplicationHandler {
             notifySessionChanged(eventBus, session, continuous, appendToHistory && !continuous);
         });
 
+        eventBus.subscribe(EditorReportChanged.class.getSimpleName(), event -> handleEditorReportChanged((EditorReportChanged) event));
+
         eventBus.subscribe(SessionReportChanged.class.getSimpleName(), event -> {
             final ParserResult report = ((SessionReportChanged) event).result();
             final String message = formatErrors(report.errors());
             eventBus.postEvent(SessionErrorChanged.builder().error(message).build());
             eventBus.postEvent(SessionStatusChanged.builder().status(message).build());
             if (report.errors().isEmpty()) {
-                notifyRenderDataChanged(eventBus, ((SessionReportChanged) event).session(), ((SessionReportChanged) event).continuous(), ((SessionReportChanged) event).appendToHistory());
+                notifySessionChanged(eventBus, ((SessionReportChanged) event).session(), ((SessionReportChanged) event).continuous(), ((SessionReportChanged) event).appendToHistory());
             }
         });
 
@@ -160,8 +164,8 @@ public class ApplicationHandler {
         eventBus.postEvent(SessionDataChanged.builder().session(session).continuous(continuous).appendToHistory(historyAppend).build());
     }
 
-    private void notifyRenderDataChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean historyAppend) {
-        eventBus.postEvent(RenderDataChanged.builder().session(session).continuous(continuous).appendToHistory(historyAppend).build());
+    private void handleEditorReportChanged(EditorReportChanged event) {
+        eventBus.postEvent(SessionReportChanged.builder().session(event.session()).continuous(event.continuous()).appendToHistory(event.appendToHistory()).result(event.result()).build());
     }
 
     private void handleTimeAnimationAction(String action) {
@@ -290,21 +294,21 @@ public class ApplicationHandler {
     }
 
     public void handleLoadFile(File file) {
-        FileManager.loadFile(file)
+        FileManager.loadBundle(file)
                 .onSuccess(session -> eventBus.postEvent(CurrentFileChanged.builder().file(file).build()))
                 .onFailure(e -> showLoadError(file, e))
                 .ifPresent(bundle -> eventBus.postEvent(SessionBundleLoaded.builder().bundle(bundle).continuous(false).appendToHistory(true).build()));
     }
 
     public void handleSaveFile(File file) {
-        FileManager.saveFile(file, new Bundle(session, clips))
+        FileManager.saveBundle(file, new Bundle(session, clips))
                 .onSuccess(bundle -> eventBus.postEvent(CurrentFileChanged.builder().file(file).build()))
                 .onFailure(e -> showSaveError(file, e))
                 .ifSuccess(v -> edited = false);
     }
 
     public void handleStoreFile(File file) {
-        FileManager.saveFile(file, new Bundle(session, clips))
+        FileManager.saveBundle(file, new Bundle(session, clips))
                 .onFailure(e -> showSaveError(file, e))
                 .ifSuccess(v -> edited = false);
     }
