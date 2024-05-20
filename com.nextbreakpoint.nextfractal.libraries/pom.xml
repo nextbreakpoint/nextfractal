@@ -34,7 +34,6 @@
         <nexus.host>https://oss.sonatype.org</nexus.host>
         <nexus.url>https://oss.sonatype.org/content/repositories/snapshots</nexus.url>
         <nexus.autoreleaseafterclose>true</nexus.autoreleaseafterclose>
-        <bintray.url>https://api.bintray.com/maven/${bintrayAccount}/maven/${project.artifactId}/;publish=1</bintray.url>
     </properties>
     <build>
         <plugins>

@@ -71,38 +71,5 @@
                 </snapshotRepository>
             </distributionManagement>
         </profile>
-        <!-- <profile>
-            <id>bintray</id>
-            <activation>
-                <property>
-                    <name>channel</name>
-                    <value>bintray</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <distributionManagement>
-                <repository>
-                    <id>bintray</id>
-                    <url>${bintray.url}</url>
-                </repository>
-            </distributionManagement>
-        </profile> -->
     </profiles>
 </project>
