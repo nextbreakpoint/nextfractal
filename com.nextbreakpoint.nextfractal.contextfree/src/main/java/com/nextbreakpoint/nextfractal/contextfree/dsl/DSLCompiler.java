@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -30,7 +30,7 @@ public class DSLCompiler {
 	public DSLCompiler() {
 	}
 	
-	public CFDGInterpreter compile(ParserResult report) {
+	public CFDGInterpreter compile(DSLParserResult report) {
 		return new CFDGInterpreter(report.getCFDG());
 	}
 }

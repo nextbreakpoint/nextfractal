@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -24,12 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
  * @author Andrea Medeghini
  */
+@Builder(setterPrefix = "with", toBuilder = true)
 public class Double2D implements Serializable, Cloneable {
 	private final double x;
 	private final double y;

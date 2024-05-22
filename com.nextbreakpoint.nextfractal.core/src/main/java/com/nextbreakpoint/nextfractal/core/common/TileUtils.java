@@ -1,49 +1,40 @@
-/*
- * NextFractal 2.1.5
- * https://github.com/nextbreakpoint/nextfractal
- *
- * Copyright 2015-2024 Andrea Medeghini
- *
- * This file is part of NextFractal.
- *
- * NextFractal is an application for creating fractals and other graphics artifacts.
- *
- * NextFractal is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * NextFractal is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 package com.nextbreakpoint.nextfractal.core.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
-import java.util.List;
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TileUtils {
-    private TileUtils() {}
+    public static RendererTile createRendererTile(int width, int height, int rows, int columns, int row, int column) {
+        int tileWidth = Math.round((float) width / (float) columns);
+        int tileHeight = Math.round((float) height / (float) rows);
+        RendererSize imageSize = new RendererSize(width, height);
+        RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+        RendererSize tileBorder = new RendererSize(0, 0);
+        RendererPoint tileOffset = new RendererPoint(Math.round(((float) column * (float) width) / (float) columns), Math.round(((float) row * (float) height) / (float) rows));
+        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+    }
 
-    public static Bundle parseData(String manifest, String metadata, String script) throws Exception {
-        final FileManagerEntry manifestEntry = new FileManagerEntry("manifest", manifest.getBytes());
-        final FileManagerEntry metadataEntry = new FileManagerEntry("metadata", metadata.getBytes());
-        final FileManagerEntry scriptEntry = new FileManagerEntry("script", script.getBytes());
+    public static RendererTile createRendererTile(int width, int height) {
+        RendererSize imageSize = new RendererSize(width, height);
+        RendererSize tileSize = new RendererSize(width, height);
+        RendererSize tileBorder = new RendererSize(0, 0);
+        RendererPoint tileOffset = new RendererPoint(0, 0);
+        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+    }
 
-        final List<FileManagerEntry> entries = Arrays.asList(manifestEntry, metadataEntry, scriptEntry);
+    public static RendererTile createRendererTile(int size) {
+        return createRendererTile(size, size);
+    }
 
-        final ObjectMapper mapper = new ObjectMapper();
+    public static RendererTile createRendererTile(double width) {
+        return createRendererTile(computeSize(width, 0.05));
+    }
 
-        final FileManifest decodedManifest = mapper.readValue(manifestEntry.getData(), FileManifest.class);
-
-        return Plugins.tryFindFactory(decodedManifest.getPluginId())
-                .flatMap(factory -> factory.createFileManager().loadEntries(entries)).orThrow();
+    private static int computeSize(double width, double percentage) {
+        return (int) Math.rint(width * percentage);
     }
 }

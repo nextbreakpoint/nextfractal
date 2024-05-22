@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -28,8 +28,8 @@ import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.*;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ErrorStrategy;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult.Type;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult.Type;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTBuilder;
@@ -48,10 +48,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTRule;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -74,7 +72,7 @@ public class JavaCompilerDSLParser {
 		this.className = className;
 	}
 	
-	public ParserResult parse(String source) throws ParserException {
+	public DSLParserResult parse(String source) throws ParserException {
 		List<SourceError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		ExpressionContext orbitContext = new ExpressionContext();
@@ -85,7 +83,7 @@ public class JavaCompilerDSLParser {
 			logger.fine(orbitSource);
 			logger.fine(colorSource);
 		}
-		return new ParserResult(ast, Type.JAVA, source, orbitSource, colorSource, errors, packageName, className);
+		return new DSLParserResult(ast, Type.JAVA, source, orbitSource, colorSource, errors, packageName, className);
 	}
 	
 	private ASTFractal parse(String source, List<SourceError> errors) throws ParserException {

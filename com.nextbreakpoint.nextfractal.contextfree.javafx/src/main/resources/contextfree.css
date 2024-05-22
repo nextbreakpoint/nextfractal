@@ -1,39 +1,34 @@
-.contextfree .keyword {
+.contextfree-keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
 }
 
-.contextfree .error {
+.contextfree-error {
     -fx-fill: red;
     -fx-font-weight: bold;
 }
 
-.contextfree .pathop {
+.contextfree-pathop {
     -fx-fill: orange;
     -fx-font-weight: bold;
 }
 
-.contextfree .operator {
+.contextfree-operator {
     -fx-fill: green;
     -fx-font-weight: bold;
 }
 
-.contextfree .paren {
+.contextfree-paren {
     -fx-fill: purple;
     -fx-font-weight: bold;
 }
 
-.contextfree .function {
+.contextfree-function {
     -fx-fill: brown;
     -fx-font-weight: bold;
 }
 
-.contextfree .brace {
+.contextfree-brace {
     -fx-fill: black;
-    -fx-font-weight: bold;
-}
-
-.contextfree .code {
-    -fx-fill: #808080;
     -fx-font-weight: bold;
 }

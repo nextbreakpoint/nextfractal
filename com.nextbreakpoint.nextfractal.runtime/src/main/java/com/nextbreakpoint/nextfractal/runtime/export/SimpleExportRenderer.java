@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -30,39 +30,41 @@ import com.nextbreakpoint.nextfractal.core.export.ExportJobHandle;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportProfile;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
+@Log
 public class SimpleExportRenderer implements ExportRenderer {
-	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());
-
-	private static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
-
 	private final ThreadFactory threadFactory;
 
 	private final ExecutorCompletionService<ExportJobHandle> service;
 
 	public SimpleExportRenderer(ThreadFactory threadFactory) {
 		this.threadFactory = Objects.requireNonNull(threadFactory);
-		service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(MAX_THREADS, threadFactory));
+		service = new ExecutorCompletionService<>(createExecutorService(threadFactory));
 	}
-	
+
 	@Override
 	public Future<ExportJobHandle> dispatch(ExportJobHandle job) {
 		return service.submit(new ProcessExportJob(job));
 	}
-	
+
+	private ExecutorService createExecutorService(ThreadFactory threadFactory) {
+		return Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), threadFactory);
+	}
+
 	private ImageComposer createImageComposer(ExportJobHandle job) {
 		return tryFindFactory(job.getProfile().getPluginId()).map(plugin -> plugin.createImageComposer(threadFactory, job.getJob().getTile(), false)).orElse(null);
 	}
@@ -77,17 +79,17 @@ public class SimpleExportRenderer implements ExportRenderer {
 
 		@Override
 		public ExportJobHandle call() {
-			return Try.of(() -> processJob(job)).onFailure(e -> processError(e)).orElse(job);
+			return Try.of(() -> processJob(job)).onFailure(this::processError).orElse(job);
 		}
 
 		private void processError(Throwable e) {
-			logger.log(Level.WARNING, "Failed to render tile", e);
+			log.log(Level.WARNING, "Failed to render tile", e);
 			job.setError(e);
 			job.setState(ExportJobState.FAILED);
 		}
 
 		private ExportJobHandle processJob(ExportJobHandle job) throws IOException {
-			logger.fine(job.toString());
+			log.fine(job.toString());
 			ExportProfile profile = job.getProfile();
 			ImageComposer composer = createImageComposer(job);
 			IntBuffer pixels = composer.renderImage(profile.getScript(), profile.getMetadata());

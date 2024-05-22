@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -617,7 +617,7 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 				statement.getExp().compile(this);
 				builder.append(");\n");
 			} else if (var.isReal() && !statement.getExp().isReal()) {
-				throw new ASTException("Cannot assign expression: " + statement.getLocation().getText(), statement.getLocation());
+				throw new ASTException("Can't assign expression: " + statement.getLocation().getText(), statement.getLocation());
 			}
 		} else {
 			var = new CompilerVariable(statement.getName(), statement.getExp().isReal(), false);

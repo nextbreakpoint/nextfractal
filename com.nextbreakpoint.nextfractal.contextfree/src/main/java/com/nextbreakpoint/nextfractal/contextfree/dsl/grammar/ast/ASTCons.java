@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -168,7 +168,7 @@ public class ASTCons extends ASTExpression {
 		locality = AST.combineLocality(locality, e.getLocality());
         type = ExpType.fromType(type.getType() | e.getType().getType());
         
-        // Cannot insert an ASTcons into children, it will be flattened away.
+        // can't  insert an ASTcons into children, it will be flattened away.
         // You must wrap the ASTcons in an ASTparen in order to insert it whole.
         if (e instanceof ASTCons) {
         	ASTCons c = (ASTCons)e;

@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -48,7 +48,7 @@ public class CompiledOperatorMulZ extends CompiledExpression {
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		throw new ASTException("Cannot assign operator result to real number", getLocation());
+		throw new ASTException("Can't assign operator result to real number", getLocation());
 	}
 
 	@Override

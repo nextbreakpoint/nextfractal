@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -29,19 +29,15 @@ import javafx.application.Platform;
 
 public class PlatformEventBus extends EventBus {
     public PlatformEventBus(String name) {
-        this(name, null);
+        super(name);
     }
 
-    public PlatformEventBus(String name, PlatformEventBus parent) {
-        super(name, parent);
-    }
-
-    public void postEvent(String channel, Object... event) {
-        final Exception error = new Exception();
-        if (Platform.isFxApplicationThread()) {
-            processEvent(channel, error, event);
-        } else {
-            throw new IllegalStateException("post event must be invoked from JavaFX main thread");
+    @Override
+    public void postEvent(Object event) {
+        if (!Platform.isFxApplicationThread()) {
+            throw new IllegalStateException("Event must be posted from JavaFX main thread");
         }
+
+        postEvent(event.getClass().getSimpleName(), event);
     }
 }

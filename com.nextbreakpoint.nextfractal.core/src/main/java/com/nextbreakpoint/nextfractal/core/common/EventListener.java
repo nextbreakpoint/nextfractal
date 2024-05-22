@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -25,5 +25,5 @@
 package com.nextbreakpoint.nextfractal.core.common;
 
 public interface EventListener {
-    void eventPosted(Object... event);
+    void onEvent(Object event);
 }

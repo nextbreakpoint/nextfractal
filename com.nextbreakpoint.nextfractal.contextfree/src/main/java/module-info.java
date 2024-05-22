@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -23,9 +23,12 @@
  *
  */
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeFactory;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadataCodec;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.MetadataCodec;
 
 module com.nextbreakpoint.nextfractal.contextfree {
+    requires static lombok;
     requires java.logging;
     requires java.desktop;
     requires com.fasterxml.jackson.databind;
@@ -38,5 +41,6 @@ module com.nextbreakpoint.nextfractal.contextfree {
     exports com.nextbreakpoint.nextfractal.contextfree.dsl.grammar;
     exports com.nextbreakpoint.nextfractal.contextfree.renderer;
     provides CoreFactory with ContextFreeFactory;
+    provides MetadataCodec with ContextFreeMetadataCodec;
     opens com.nextbreakpoint.nextfractal.contextfree.module to com.fasterxml.jackson.databind;
 }

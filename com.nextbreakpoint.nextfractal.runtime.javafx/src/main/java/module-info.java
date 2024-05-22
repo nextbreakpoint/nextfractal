@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -23,6 +23,7 @@
  *
  */
 module com.nextbreakpoint.nextfractal.runtime.javafx {
+    requires static lombok;
     requires java.logging;
     requires java.desktop;
     requires java.compiler;

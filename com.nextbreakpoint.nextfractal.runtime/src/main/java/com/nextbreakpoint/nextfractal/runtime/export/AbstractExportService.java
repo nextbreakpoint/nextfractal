@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -28,6 +28,7 @@ import com.nextbreakpoint.nextfractal.core.export.ExportHandle;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
+import lombok.extern.java.Log;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,7 +41,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 
+@Log
 public abstract class AbstractExportService implements ExportService {
 	private final HashMap<String, ExportHandle> sessions = new LinkedHashMap<>();
 	private final List<ExportHandle> finishedSessions = new LinkedList<>();
@@ -49,8 +52,8 @@ public abstract class AbstractExportService implements ExportService {
 	
 	public AbstractExportService(ThreadFactory threadFactory) {
 		executor = Executors.newSingleThreadScheduledExecutor(Objects.requireNonNull(threadFactory));
-		executor.scheduleAtFixedRate(() -> lockAndUpdateSessions(), 1000, 250, TimeUnit.MILLISECONDS);
-		executor.scheduleWithFixedDelay(() -> notifyUpdateSessions(), 1000, 1000, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(this::lockAndUpdateSessions, 1000, 250, TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(this::notifyUpdateSessions, 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
 	public final void shutdown() {
@@ -58,6 +61,7 @@ public abstract class AbstractExportService implements ExportService {
 		try {
 			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -139,7 +143,7 @@ public abstract class AbstractExportService implements ExportService {
 				lock.unlock();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, "Can't update sessions", e);
 		}
 	}
 
@@ -156,7 +160,7 @@ public abstract class AbstractExportService implements ExportService {
 			}
 			notifyUpdate(copyOfSessions);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, "Can't notify updates", e);
 		}
 	}
 

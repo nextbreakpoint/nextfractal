@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -641,7 +641,7 @@ public class Renderer {
 			}
 			Thread.yield();
 		} catch (Throwable e) {
-			logger.log(Level.WARNING, "Cannot render fractal", e);
+			logger.log(Level.WARNING, "Can't render fractal", e);
 			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
 		}
 	}

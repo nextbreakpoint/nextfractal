@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.dsl.javacompiler;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.CompilerException;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ClassFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 
@@ -52,7 +52,7 @@ import java.util.logging.Logger;
 public class JavaCompilerDSLCompiler {
 	private static final Logger logger = Logger.getLogger(JavaCompilerDSLCompiler.class.getName());
 
-	public ClassFactory<Orbit> compileOrbit(ParserResult report) throws CompilerException {
+	public ClassFactory<Orbit> compileOrbit(DSLParserResult report) throws CompilerException {
 		List<SourceError> errors = new ArrayList<>();
 		try {
 			Class<Orbit> clazz = compileToClass(report.getOrbitSource(), report.getPackageName(), report.getClassName() + "Orbit", Orbit.class, errors);
@@ -65,7 +65,7 @@ public class JavaCompilerDSLCompiler {
 		}
 	}
 
-	public ClassFactory<Color> compileColor(ParserResult report) throws CompilerException {
+	public ClassFactory<Color> compileColor(DSLParserResult report) throws CompilerException {
 		List<SourceError> errors = new ArrayList<>();
 		try {
 			Class<Color> clazz = compileToClass(report.getColorSource(), report.getPackageName(), report.getClassName() + "Color", Color.class, errors);

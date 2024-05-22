@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -44,7 +44,7 @@ public class CompiledAssignStatement extends CompiledStatement {
 		CompilerVariable var = variables.get(name);
 		if (var != null) {
 			if (var.isReal() && !exp.isReal()) {
-				throw new ASTException("Cannot assign expression", getLocation());
+				throw new ASTException("Can't assign expression", getLocation());
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class CompiledAssignStatement extends CompiledStatement {
 			} else if (!var.isReal()) {
 				var.setValue(exp.evaluate(context, scope));
 			} else {
-				throw new ASTException("Cannot assign expression", getLocation());
+				throw new ASTException("Can't assign expression", getLocation());
 			}
 		} else {
 			var = new CompilerVariable(name, exp.isReal(), false);

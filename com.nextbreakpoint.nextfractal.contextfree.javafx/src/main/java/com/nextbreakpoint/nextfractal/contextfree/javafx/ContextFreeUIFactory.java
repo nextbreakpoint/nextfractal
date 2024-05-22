@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -25,53 +25,55 @@
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParserResult;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
-import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeParamsStrategy;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeParserStrategy;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.core.common.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
+import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.javafx.*;
+import com.nextbreakpoint.nextfractal.core.common.TileUtils;
+import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBusPublisher;
+import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.javafx.KeyHandler;
+import com.nextbreakpoint.nextfractal.core.javafx.MetadataDelegate;
+import com.nextbreakpoint.nextfractal.core.javafx.RenderingContext;
+import com.nextbreakpoint.nextfractal.core.javafx.RenderingStrategy;
+import com.nextbreakpoint.nextfractal.core.javafx.ToolContext;
+import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.viewer.Toolbar;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.scene.layout.Pane;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 public class ContextFreeUIFactory implements UIFactory {
 	public static final String PLUGIN_ID = "ContextFree";
 
+	@Override
 	public String getId() {
 		return PLUGIN_ID;
 	}
 
 	@Override
-	public Pane createEditorPane(PlatformEventBus eventBus, Session session) {
-		return new EditorPane(eventBus);
-	}
-
-	@Override
-	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
-		return new RenderPane((ContextFreeSession) session, eventBus, width, height, 1, 1);
-	}
-
-	@Override
-	public Pane createParamsPane(PlatformEventBus eventBus, Session session) {
-		return new ParamsPane((ContextFreeSession) session, eventBus);
-	}
-
-	@Override
-	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+	public GridItemRenderer createRenderer(Bitmap bitmap) {
 		Map<String, Integer> hints = new HashMap<String, Integer>();
-		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
+		RendererTile tile = TileUtils.createRendererTile(bitmap.getWidth(), bitmap.getHeight());
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("ContextFree Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
@@ -86,8 +88,8 @@ public class ContextFreeUIFactory implements UIFactory {
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
 		DSLParser compiler = new DSLParser();
-		ParserResult report = compiler.parse(session.getScript());
-		if (report.getErrors().size() > 0) {
+		DSLParserResult report = compiler.parse(session.getScript());
+		if (!report.getErrors().isEmpty()) {
 			throw new RuntimeException("Failed to compile source");
 		}
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
@@ -98,22 +100,58 @@ public class ContextFreeUIFactory implements UIFactory {
 
 	@Override
 	public Try<String, Exception> loadResource(String resourceName) {
-		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
+		return Try.of(() -> Objects.requireNonNull(getClass().getResource(resourceName)).toExternalForm());
 	}
 
-	private RendererTile createSingleTile(int width, int height) {
-		int tileWidth = width;
-		int tileHeight = height;
-		RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
-		RendererSize tileBorder = new RendererSize(0, 0);
-		RendererPoint tileOffset = new RendererPoint(0, 0);
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
+	@Override
+	public ParserStrategy createParserStrategy() {
+		return new ContextFreeParserStrategy();
 	}
 
-	private class GridItemRendererAdapter implements GridItemRenderer {
-		private RendererCoordinator coordinator;
+	@Override
+	public ParamsStrategy createParamsStrategy() {
+		return new ContextFreeParamsStrategy();
+	}
+
+	@Override
+	public RenderingContext createRenderingContext() {
+		final RenderingContext renderingContext = new RenderingContext();
+		renderingContext.setZoomSpeed(1.025);
+		return renderingContext;
+	}
+
+	@Override
+	public MetadataDelegate createMetadataDelegate(EventBusPublisher publisher, Supplier<Session> supplier) {
+		return new ContextFreeMetadataDelegate(publisher, supplier);
+	}
+
+	@Override
+	public RenderingStrategy createRenderingStrategy(RenderingContext renderingContext, MetadataDelegate delegate, int width, int height) {
+		return new ContextFreeRenderingStrategy(renderingContext, delegate, width, height, 1, 1);
+	}
+
+	@Override
+	public KeyHandler createKeyHandler(RenderingContext renderingContext, MetadataDelegate delegate) {
+		return new ContextFreeKeyHandler(renderingContext, delegate);
+	}
+
+	@Override
+	public Pane createRenderingPanel(RenderingContext renderingContext, int width, int height) {
+		return new ContextFreeRenderingPanel(renderingContext, width, height);
+	}
+
+	@Override
+	public Toolbar createToolbar(EventBusPublisher publisher, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext) {
+		return new ContextFreeToolbar(delegate, publisher, (ContextFreeToolContext) toolContext);
+	}
+
+	@Override
+	public ToolContext<? extends Metadata> createToolContext(RenderingContext renderingContext, RenderingStrategy renderingStrategy, MetadataDelegate delegate, int width, int height) {
+		return new ContextFreeToolContext(renderingContext, (ContextFreeRenderingStrategy) renderingStrategy, delegate, width, height);
+	}
+
+	private static class GridItemRendererAdapter implements GridItemRenderer {
+		private final RendererCoordinator coordinator;
 
 		public GridItemRendererAdapter(RendererCoordinator coordinator) {
 			this.coordinator = coordinator;

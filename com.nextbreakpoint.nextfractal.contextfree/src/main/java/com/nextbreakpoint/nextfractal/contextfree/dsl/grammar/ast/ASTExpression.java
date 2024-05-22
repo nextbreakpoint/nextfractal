@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -127,11 +127,11 @@ public class ASTExpression {
 	}
 
 	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
-		throw new RuntimeException("Cannot convert this expression into an adjustment"); 
+		throw new RuntimeException("Can't convert this expression into an adjustment"); 
 	}
 
 	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
-		throw new RuntimeException("Cannot convert this expression into a shape"); 
+		throw new RuntimeException("Can't convert this expression into a shape"); 
 	}
 	
 	public void entropy(StringBuilder e) {

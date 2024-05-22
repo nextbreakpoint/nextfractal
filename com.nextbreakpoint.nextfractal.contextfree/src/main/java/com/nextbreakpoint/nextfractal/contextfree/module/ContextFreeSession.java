@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -28,11 +28,17 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@EqualsAndHashCode(callSuper = false)
+@Builder(setterPrefix = "with", toBuilder = true)
+@AllArgsConstructor
 public class ContextFreeSession extends Session {
 	private static final Logger logger = Logger.getLogger(ContextFreeSession.class.getName());
 
@@ -70,9 +76,19 @@ public class ContextFreeSession extends Session {
 		return metadata;
 	}
 
+	@Override
+	public Session withSource(String source) {
+		return toBuilder().withScript(source).build();
+	}
+
+	@Override
+	public Session withMetadata(Metadata metadata) {
+		return toBuilder().withMetadata((ContextFreeMetadata) metadata).build();
+	}
+
 	private static String getInitialSource() {
-		return Try.of(() -> SessionUtils.readAll(ContextFreeSession.class.getResourceAsStream("/contextfree.txt")))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot load resource /contextfree.txt"))
+		return Try.of(() -> SessionUtils.readAll(Objects.requireNonNull(ContextFreeSession.class.getResourceAsStream("/contextfree.txt"))))
+				.onFailure(e -> logger.log(Level.WARNING, "Can't load resource /contextfree.txt"))
 				.orElse("");
 	}
 

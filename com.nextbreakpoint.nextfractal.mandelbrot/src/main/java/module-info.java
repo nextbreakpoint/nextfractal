@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -23,9 +23,12 @@
  *
  */
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.MetadataCodec;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotFactory;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadataCodec;
 
 module com.nextbreakpoint.nextfractal.mandelbrot {
+    requires static lombok;
     requires java.logging;
     requires java.desktop;
     requires java.compiler;
@@ -40,5 +43,6 @@ module com.nextbreakpoint.nextfractal.mandelbrot {
     exports com.nextbreakpoint.nextfractal.mandelbrot.renderer;
     exports com.nextbreakpoint.nextfractal.mandelbrot.core;
     provides CoreFactory with MandelbrotFactory;
+    provides MetadataCodec with MandelbrotMetadataCodec;
     opens com.nextbreakpoint.nextfractal.mandelbrot.module to com.fasterxml.jackson.databind;
 }

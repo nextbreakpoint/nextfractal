@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParserResult;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ public class DSLCompilerTest2 extends BaseTest {
 	public void Compiler1() {
 		try {
 			DSLParser parser = new DSLParser("test", "Compile");
-			ParserResult result = parser.parse(getSource("/source2.m"));
+			DSLParserResult result = parser.parse(getSource("/source2.m"));
 		} catch (ParserException e) {
 			printErrors(e.getErrors());
 			assertThat(e.getErrors()).hasSize(1);

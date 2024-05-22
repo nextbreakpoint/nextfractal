@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -31,11 +31,17 @@ import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@EqualsAndHashCode(callSuper = false)
+@Builder(setterPrefix = "with", toBuilder = true)
+@AllArgsConstructor
 public class MandelbrotSession extends Session {
 	private static final Logger logger = Logger.getLogger(MandelbrotSession.class.getName());
 
@@ -73,9 +79,19 @@ public class MandelbrotSession extends Session {
 		return metadata;
 	}
 
+	@Override
+	public Session withSource(String source) {
+		return toBuilder().withScript(source).build();
+	}
+
+	@Override
+	public Session withMetadata(Metadata metadata) {
+		return toBuilder().withMetadata((MandelbrotMetadata) metadata).build();
+	}
+
 	private static String getInitialScript() {
-		return Try.of(() -> SessionUtils.readAll(MandelbrotSession.class.getResourceAsStream("/mandelbrot.txt")))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot load resource /mandelbrot.txt"))
+		return Try.of(() -> SessionUtils.readAll(Objects.requireNonNull(MandelbrotSession.class.getResourceAsStream("/mandelbrot.txt"))))
+				.onFailure(e -> logger.log(Level.WARNING, "Can't load resource /mandelbrot.txt"))
 				.orElse("");
 	}
 

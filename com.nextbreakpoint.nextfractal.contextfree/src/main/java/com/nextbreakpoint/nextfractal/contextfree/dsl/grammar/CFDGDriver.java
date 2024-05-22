@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -258,7 +258,7 @@ public class CFDGDriver {
 		String err = cfdg.setShapeParams(currentShape, paramDecls, paramDecls.getStackCount(), isPath);
 		if (err != null) {
 			errorOccured = true;
-			error("cannot set shape params: " + err, location);
+			error("Can't set shape params: " + err, location);
 		}
 		localStackDepth -= paramDecls.getStackCount();
 		paramDecls.getParameters().clear();
@@ -277,7 +277,7 @@ public class CFDGDriver {
 		}
 		ShapeType type = cfdg.getShapeType(rule.getNameIndex());
 		if ((rule.isPath() && type == ShapeType.RuleType) || (!rule.isPath() && type == ShapeType.PathType)) {
-			error("Cannot mix rules and shapes with the same name", rule.getLocation());
+			error("Can't mix rules and shapes with the same name", rule.getLocation());
 		}
 		boolean matchesShape = cfdg.addRule(rule);
 		if (!isShapeItem && matchesShape) {
@@ -298,7 +298,7 @@ public class CFDGDriver {
 	public ASTDefine makeDefinition(String name, boolean isFunction, Token location) {
 		if (name.startsWith("CF::")) {
 			if (isFunction) {
-				error("Configuration parameters cannot be functions", location);
+				error("Configuration parameters can't  be functions", location);
 				return null;
 			}
 			if (containerStack.lastElement().isGlobal()) {
@@ -497,7 +497,7 @@ public class CFDGDriver {
 		}
 		if (ret.getArguments() != null && ret.getArguments().getType() == ExpType.ReuseType) {
 			if (makeStart) {
-				error("Startshape cannot reuse parameters", location);
+				error("Startshape can't  reuse parameters", location);
 			} else if (nameIndex == currentShape)  {
 				ret.setArgSouce(ArgSource.SimpleParentArgs);
 				ret.setTypeSignature(ret.getTypeSignature());
@@ -567,7 +567,7 @@ public class CFDGDriver {
 		ASTParameter bound = findExpression(nameIndex, isGlobal);
 		if (bound != null) {
 			if (!consAllowed) {
-				error("Cannot bind expression to variable/parameter", location);
+				error("Can't bind expression to variable/parameter", location);
 			}
 			return makeVariable(name, location).append(args); 
 		}
@@ -650,7 +650,7 @@ public class CFDGDriver {
 		int oldType = container.getRepType();
 		container.setRepType(oldType | r.getRepType().getType());
 		if (badContainer(container.getRepType()) && !badContainer(oldType) && !global) {
-			error("Cannot mix path elements and replacements in the same container", r.getLocation());
+			error("Can't mix path elements and replacements in the same container", r.getLocation());
 		}
 	}
 	

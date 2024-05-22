@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -352,7 +352,7 @@ public class ASTModTerm extends ASTExpression {
 				 target[0] += modArgs[0];
 				break;
 			case stroke: {
-				driver.error("Cannot provide a stroke width in this context", location);
+				driver.error("Can't provide a stroke width in this context", location);
 				break;
 			}
 			case x1:
@@ -361,11 +361,11 @@ public class ASTModTerm extends ASTExpression {
 			case y2:
 			case xrad:
 			case yrad: {
-				driver.error("Cannot provide a path operation term in this context", location);
+				driver.error("Can't provide a path operation term in this context", location);
 				break;
 			}
 			case param: {
-				driver.error("Cannot provide a parameter in this context", location);
+				driver.error("Can't provide a parameter in this context", location);
 				break;
 			}
 			case unknown: {
@@ -498,7 +498,7 @@ public class ASTModTerm extends ASTExpression {
 
 					case ModType: {
 						if (modType != ModType.transform) {
-							driver.error("Cannot accept a transform expression here", location);
+							driver.error("Can't accept a transform expression here", location);
 						} else {
 							modType = ModType.modification;
 						}

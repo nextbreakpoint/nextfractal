@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -26,9 +26,13 @@ package com.nextbreakpoint.nextfractal.contextfree.module;
 
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
+@EqualsAndHashCode(exclude = "time")
+@Builder(setterPrefix = "with", toBuilder = true)
 public class ContextFreeMetadata implements Metadata {
 	private final String seed;
 	private final Time time = new Time(0, 1);
@@ -49,20 +53,20 @@ public class ContextFreeMetadata implements Metadata {
 		return seed;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		ContextFreeMetadata that = (ContextFreeMetadata) o;
-
-		return seed.equals(that.seed);
-	}
-
-	@Override
-	public int hashCode() {
-		return seed.hashCode();
-	}
+//	@Override
+//	public boolean equals(Object o) {
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//
+//		ContextFreeMetadata that = (ContextFreeMetadata) o;
+//
+//		return seed.equals(that.seed);
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		return seed.hashCode();
+//	}
 
 	@Override
 	public Time getTime() {

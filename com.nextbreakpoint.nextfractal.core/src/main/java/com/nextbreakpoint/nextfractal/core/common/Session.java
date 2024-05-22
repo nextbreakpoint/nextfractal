@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -32,4 +32,8 @@ public abstract class Session {
 	public abstract String getScript();
 
 	public abstract Metadata getMetadata();
+
+	public abstract Session withSource(String source);
+
+	public abstract Session withMetadata(Metadata metadata);
 }

@@ -2,7 +2,7 @@
 <project name="NextFractal">
 	<property environment="env" />
 	<property name="openjfx.version" value="21.0.1" />
-	<property name="nextfractal.version" value="2.1.5" />
+	<property name="nextfractal.version" value="2.2.0" />
 	<property name="nextfractal.year" value="2024" />
 	<property name="application" value="NextFractal" />
 	<property name="description" value="NextFractal is an application for creating fractals" />
@@ -253,7 +253,7 @@
 				<arg value="create" />
 				<arg value="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
 				<arg value="-volname" />
-				<arg value="NextFractal" />
+				<arg value="NextFractal @{version}" />
 				<arg value="-fs" />
 				<arg value="HFS+" />
 				<arg value="-srcfolder" />
@@ -533,6 +533,8 @@
 		</replaceregexp>
 		<maven basedir="${basedir}" command="mvn" goal="versions:set" options="-DnewVersion=${nextfractal.version}" resultproperty="maven.build.result"/>
 		<maven basedir="${basedir}" command="mvn" goal="versions:commit" options="" resultproperty="maven.build.result"/>
+		<maven basedir="${basedir}/com.nextbreakpoint.nextfractal.libraries" command="mvn" goal="versions:set" options="-DnewVersion=${nextfractal.version}" resultproperty="maven.build.result"/>
+		<maven basedir="${basedir}/com.nextbreakpoint.nextfractal.libraries" command="mvn" goal="versions:commit" options="" resultproperty="maven.build.result"/>
 	</target>
 	<target name="change-copyright">
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>

@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
-import com.nextbreakpoint.nextfractal.core.common.Plugins;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -66,10 +65,6 @@ import java.util.stream.Stream;
 
 public class BrowsePane extends BorderPane {
     private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
-    private static final String PROPERTY_DIRECTORY_WORKSPACE = "com.nextbreakpoint.nextfractal.directory.workspace";
-    private static final String PROPERTY_DIRECTORY_EXAMPLES = "com.nextbreakpoint.nextfractal.directory.examples";
-    private static final String PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE = "[user.dir]/.nextfractal";
-    private static final String PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE = "[user.home]";
     private static final int FRAME_LENGTH_IN_MILLIS = 50;
     private static final int SCROLL_BOUNCE_DELAY = 500;
     private final ExecutorService browserExecutor;
@@ -78,13 +73,18 @@ public class BrowsePane extends BorderPane {
     private final int numRows = 3;
     private final int numCols = 3;
     private final LinkedList<String> filter = new LinkedList<>();
+    private final File workspace;
+    private final File examples;
     private List<GridItem> items = new ArrayList<>();
     private BrowseDelegate delegate;
     private RendererTile tile;
     private AnimationTimer timer;
     private Thread thread;
 
-    public BrowsePane(int width, int height) {
+    public BrowsePane(int width, int height, File workspace, File examples) {
+        this.workspace = workspace;
+        this.examples = examples;
+
         setMinWidth(width);
         setMaxWidth(width);
         setPrefWidth(width);
@@ -93,8 +93,6 @@ public class BrowsePane extends BorderPane {
         setPrefHeight(height);
 
         filter.add(".nf.zip");
-
-        Plugins.factories().forEach(f -> filter.addAll(f.createFileManager().getSupportedFiles()));
 
         sourcePathProperty = new StringObservableValue();
 
@@ -229,7 +227,7 @@ public class BrowsePane extends BorderPane {
     }
 
     public File getCurrentSourceFolder() {
-        return getWorkspace();
+        return workspace;
     }
 
     private File getDefaultSourceFolder() {
@@ -237,7 +235,7 @@ public class BrowsePane extends BorderPane {
     }
 
     private File getDefaultImportFolder() {
-        return getExamples();
+        return examples;
     }
 
     private DefaultThreadFactory createThreadFactory(String name) {
@@ -245,7 +243,7 @@ public class BrowsePane extends BorderPane {
     }
 
     public void reload() {
-        if (listFiles(getWorkspace()).isEmpty()) {
+        if (listFiles(workspace).isEmpty()) {
             logger.log(Level.INFO, "Workspace is empty");
             importPathProperty.setValue(null);
             Platform.runLater(this::doChooseImportFolder);
@@ -370,7 +368,7 @@ public class BrowsePane extends BorderPane {
     }
 
     private void copyFile(File file, File location) {
-        FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(createFileName(file, location), session));
+        FileManager.loadBundle(file).ifPresent(session -> FileManager.saveBundle(createFileName(file, location), session));
     }
 
     private File createFileName(File file, File location) {
@@ -608,42 +606,6 @@ public class BrowsePane extends BorderPane {
             item.setErrors(List.of(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
             logger.log(Level.WARNING, "Can't initialize renderer", e);
         }
-    }
-
-    private File getWorkspace() {
-        File path = new File(getDefaultDirectoryWorkspace());
-        logger.info("workspace = " + path.getAbsolutePath());
-        if (path.getParentFile().canWrite() && !path.exists()) {
-            path.mkdirs();
-        }
-        if (!path.canWrite()) {
-            logger.severe("Can't write into workspace: " + path.getAbsolutePath());
-        }
-        if (!path.canRead()) {
-            logger.severe("Can't read from workspace: " + path.getAbsolutePath());
-        }
-        return path;
-    }
-
-    private String getDefaultDirectoryWorkspace() {
-        return System.getProperty(PROPERTY_DIRECTORY_WORKSPACE, PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE)
-                .replace("[user.home]", System.getProperty("user.home"))
-                .replace("[user.dir]", System.getProperty("user.dir"));
-    }
-
-    private File getExamples() {
-        File path = new File(getDefaultDirectoryExamples());
-        logger.log(Level.FINE, "examples " + path.getAbsolutePath());
-        if (!path.canRead()) {
-            logger.severe("Can't read from examples: " + path.getAbsolutePath());
-        }
-        return path;
-    }
-
-    private String getDefaultDirectoryExamples() {
-        return System.getProperty(PROPERTY_DIRECTORY_EXAMPLES, PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE)
-                .replace("[user.home]", System.getProperty("user.home"))
-                .replace("[user.dir]", System.getProperty("user.dir"));
     }
 
     private void stopWatching() {

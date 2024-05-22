@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -326,7 +326,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 							locality = bound.getLocality();
 						}
 						if (arguments != null && arguments.getType() != ExpType.NoType) {
-							driver.error("Cannot bind parameters twice", arguments.getLocation());
+							driver.error("Can't bind parameters twice", arguments.getLocation());
 						}
 						return null;
 					}

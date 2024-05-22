@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.module;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLCompiler;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParserResult;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.common.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
@@ -61,7 +61,7 @@ public class ContextFreeImageGenerator implements ImageGenerator {
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 			DSLParser parser = new DSLParser();
-			ParserResult report = parser.parse(script);
+			DSLParserResult report = parser.parse(script);
 			DSLCompiler compiler = new DSLCompiler();
 			CFDGInterpreter interpreter = compiler.compile(report);
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);

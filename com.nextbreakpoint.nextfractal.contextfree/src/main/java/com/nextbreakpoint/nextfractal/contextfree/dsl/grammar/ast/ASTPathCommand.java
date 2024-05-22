@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -151,7 +151,7 @@ public class ASTPathCommand extends ASTReplacement {
 				flags = flagValue[0];
 				if (w != null) {
 					if (parameters != null) {
-						driver.error("Cannot have a stroke adjustment in a v3 path command", w.getLocation());
+						driver.error("Can't have a stroke adjustment in a v3 path command", w.getLocation());
 					} else if (w.size() != 1 || w.getType() != ExpType.NumericType || w.evaluate(null, 0) != 1) {
 						driver.error("Stroke adjustment is ill-formed", w.getLocation());
 					}

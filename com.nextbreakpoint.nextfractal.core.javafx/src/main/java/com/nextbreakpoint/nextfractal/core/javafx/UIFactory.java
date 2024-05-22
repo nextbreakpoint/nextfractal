@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -25,46 +25,104 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
+import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.javafx.viewer.Toolbar;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.scene.layout.Pane;
+
+import java.util.function.Supplier;
 
 public interface UIFactory {
 	/**
 	 * @return
 	 */
-	public String getId();
+	String getId();
 
 	/**
-	 * @param eventBus
-     * @param session
-     * @return
-	 */
-	public Pane createEditorPane(PlatformEventBus eventBus, Session session);
-
-	/**
-	 * @param eventBus
-	 * @param session
-	 * @param width
-	 * @param height
+	 * @param bitmap
 	 * @return
+	 * @throws Exception
 	 */
-	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height);
+	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
 	/**
-	 * @param eventBus
 	 * @param session
+	 * @param size
 	 * @return
+	 * @throws Exception
 	 */
-	public Pane createParamsPane(PlatformEventBus eventBus, Session session);
-
-	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
-
-	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
+	BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
 
 	/**
 	 * @param resourceName
 	 * @return
 	 */
-	public Try<String, Exception> loadResource(String resourceName);
+	Try<String, Exception> loadResource(String resourceName);
+
+	/**
+	 * @return
+	 */
+	ParserStrategy createParserStrategy();
+
+	/**
+	 * @return
+	 */
+	ParamsStrategy createParamsStrategy();
+
+	/**
+	 * @return
+	 */
+	RenderingContext createRenderingContext();
+
+	/**
+	 * @param publisher
+	 * @param supplier
+	 * @return
+	 */
+	MetadataDelegate createMetadataDelegate(EventBusPublisher publisher, Supplier<Session> supplier);
+
+	/**
+	 * @param renderingContext
+	 * @param delegate
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	RenderingStrategy createRenderingStrategy(RenderingContext renderingContext, MetadataDelegate delegate, int width, int height);
+
+	/**
+	 * @param renderingContext
+	 * @param delegate
+	 * @return
+	 */
+	KeyHandler createKeyHandler(RenderingContext renderingContext, MetadataDelegate delegate);
+
+	/**
+	 * @param renderingContext
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	Pane createRenderingPanel(RenderingContext renderingContext, int width, int height);
+
+	/**
+	 * @param publisher
+	 * @param delegate
+	 * @param toolContext
+	 * @return
+	 */
+	Toolbar createToolbar(EventBusPublisher publisher, MetadataDelegate delegate, ToolContext<? extends Metadata> toolContext);
+
+	/**
+	 * @param renderingContext
+	 * @param renderingStrategy
+	 * @param delegate
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	ToolContext<? extends Metadata> createToolContext(RenderingContext renderingContext, RenderingStrategy renderingStrategy, MetadataDelegate delegate, int width, int height);
 }

@@ -12,18 +12,18 @@
 	-fx-background-color: transparent;
 }
 
-.text-area {
-    -fx-background-color: #FFFFFF;
+.button :disabled {
+    -fx-opacity: 0.5;
 }
 
-.text-area:focused .content {
-	-fx-background-color: white white black black;
-	-fx-background-insets: 0, 0, 1, 2;
+.source-editor ParagraphText {
+    -fx-tab-size: 2;
+    -fx-fill: #202020;
 }
 
-.text-area .content {
-	-fx-background-color: white white black black;
-	-fx-background-insets: 0, 0, 1, 2;
+.source-editor .error {
+    -fx-fill: #FF2020;
+    -fx-font-weight: bold;
 }
 
 .list-view {
@@ -227,8 +227,4 @@
 
 .application .text-small {
     -fx-font-size: 0.9em;
-}
-
-.button :disabled {
-    -fx-opacity: 0.5;
 }

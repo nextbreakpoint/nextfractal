@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -151,7 +151,7 @@ public class CFDG {
 		needle.setWeight(weight);
 		int first = lowerBound(rules, 0, rules.size(), needle);
 		if (first == rules.size() || rules.get(first).getNameIndex() != nameIndex) {
-			driver.fail("Cannot find a rule for a shape (very helpful I know)", null);
+			driver.fail("Can't find a rule for a shape (very helpful I know)", null);
 		}
 		return rules.get(first);
 	}

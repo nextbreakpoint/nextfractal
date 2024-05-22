@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.1.5
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2024 Andrea Medeghini
@@ -109,7 +109,7 @@ public class ASTPathOp extends ASTReplacement {
 	private void pushData(double[] opData, CFDGRenderer renderer) {
 		if (arguments != null) {
 			if (arguments.evaluate(opData, 7, renderer) < 0) {
-				driver.error("Cannot evaluate arguments", location);
+				driver.error("Can't evaluate arguments", location);
 			}
 		} else {
 			getChildChange().getModData().getTransform().getMatrix(opData);
@@ -120,7 +120,7 @@ public class ASTPathOp extends ASTReplacement {
 		if (arguments != null && arguments.isConstant()) {
 			double[] data = new double[7];
 			if (arguments.evaluate(data, 7) < 0) {
-				driver.error("Cannot evaluate arguments", location);
+				driver.error("Can't evaluate arguments", location);
 			}
 			arguments = null;
 			getChildChange().getModData().setTransform(new AffineTransform(data));
