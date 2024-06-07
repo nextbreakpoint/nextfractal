@@ -13,7 +13,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <ffmpeg4java.version>3.1.1-1.1</ffmpeg4java.version>
         <freeimage4java.version>3.18.0-1.2</freeimage4java.version>
-        <try4java.version>2.0.4</try4java.version>
         <antlr4.version>4.13.1</antlr4.version>
         <commonmath3.version>3.6.1</commonmath3.version>
         <richtextfx.version>0.11.2</richtextfx.version>
@@ -75,7 +74,7 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>com.nextbreakpoint,org.antlr,org.apache.commons,io.reactivex.rxjava2,org.reactivestream,org.fxmisc.wellbehaved,org.fxmisc.undo,org.fxmisc.richtext,org.fxmisc.flowless,org.reactfx</includeGroupIds>
-                            <includeArtifactIds>com.nextbreakpoint.ffmpeg4java,com.nextbreakpoint.freeimage4java,com.nextbreakpoint.try4java,antlr4-runtime,commons-math3,rxjava,rxjavafx,reactive-streams,wellbehavedfx,undofx,richtextfx,flowless,reactfx</includeArtifactIds>
+                            <includeArtifactIds>com.nextbreakpoint.ffmpeg4java,com.nextbreakpoint.freeimage4java,antlr4-runtime,commons-math3,rxjava,rxjavafx,reactive-streams,wellbehavedfx,undofx,richtextfx,flowless,reactfx</includeArtifactIds>
                             <outputDirectory>${project.build.directory}/classes</outputDirectory>
                             <excludes>**/*.MF</excludes>
                         </configuration>
@@ -106,7 +105,6 @@
                                     </artifact>
                                     <moduleInfoSource>
                                         module com.nextbreakpoint.nextfractal.libraries {
-                                            exports com.nextbreakpoint;
                                             exports com.nextbreakpoint.ffmpeg4java;
                                             exports com.nextbreakpoint.freeimage4java;
                                             exports org.antlr.v4.runtime;
@@ -253,11 +251,6 @@
                 <version>${freeimage4java.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.nextbreakpoint</groupId>
-                <artifactId>com.nextbreakpoint.try4java</artifactId>
-                <version>${try4java.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
                 <version>${openjfx.version}</version>
@@ -323,11 +316,6 @@
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
             <artifactId>com.nextbreakpoint.freeimage4java</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.try4java</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

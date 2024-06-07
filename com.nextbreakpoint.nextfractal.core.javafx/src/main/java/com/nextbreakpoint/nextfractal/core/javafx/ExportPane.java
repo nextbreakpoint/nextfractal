@@ -24,13 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.Try;
+import com.nextbreakpoint.common.command.Command;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.common.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
@@ -49,7 +49,6 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -462,13 +461,17 @@ public class ExportPane extends BorderPane {
 	}
 
 	public void dispose() {
-		List<ExecutorService> executors = Arrays.asList(executor);
-		executors.forEach(executor -> executor.shutdownNow());
-		executors.forEach(executor -> await(executor));
+		List<ExecutorService> executors = List.of(executor);
+		executors.forEach(ExecutorService::shutdownNow);
+		executors.forEach(this::await);
 	}
 
 	private void await(ExecutorService executor) {
-		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
+		Command.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS))
+				.execute()
+				.observe()
+				.onFailure(e -> logger.warning("Await termination timeout"))
+				.get();
 	}
 
 	public void appendClip(Clip clip) {
@@ -476,11 +479,16 @@ public class ExportPane extends BorderPane {
 	}
 
 	private void addClip(Clip clip, boolean notifyAddClip) {
-		tryFindFactory(clip.getFirstEvent().getPluginId()).map(this::createImageComposer).ifPresent(composer -> submitItem(clip, composer, notifyAddClip));
+		Command.of(tryFindFactory(clip.getFirstEvent().getPluginId()))
+				.map(this::createImageComposer)
+				.execute()
+				.optional()
+				.ifPresent(composer -> submitItem(clip, composer, notifyAddClip));
 	}
 
 	private void submitItem(Clip clip, ImageComposer composer, boolean notifyAddClip) {
-		executor.submit(() -> Try.of(() -> renderImage(clip, composer)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, composer.getSize(), notifyAddClip))));
+		executor.submit(() -> Command.of(() -> renderImage(clip, composer))
+				.execute().optional().ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, composer.getSize(), notifyAddClip))));
 	}
 
 	private IntBuffer renderImage(Clip clip, ImageComposer composer) {

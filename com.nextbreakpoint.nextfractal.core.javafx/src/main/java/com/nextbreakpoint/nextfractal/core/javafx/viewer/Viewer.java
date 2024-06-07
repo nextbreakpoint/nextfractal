@@ -315,7 +315,7 @@ public class Viewer extends BorderPane {
 
 		delegate = null;
 
-		factory = tryFindFactory(session.getPluginId()).orElse(null);
+		factory = tryFindFactory(session.getPluginId()).optional().orElse(null);
 
 		if (factory == null) {
 			return;

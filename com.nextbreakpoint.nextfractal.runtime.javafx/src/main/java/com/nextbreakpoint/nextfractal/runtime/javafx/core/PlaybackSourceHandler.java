@@ -24,7 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx.core;
 
-import com.nextbreakpoint.Try;
+import com.nextbreakpoint.common.command.Command;
+import com.nextbreakpoint.common.either.Either;
 import com.nextbreakpoint.nextfractal.core.common.ParserResult;
 import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
@@ -105,9 +106,10 @@ public class PlaybackSourceHandler {
         this.session = session;
     }
 
-    public static Try<ParserStrategy, Exception> createParserStrategy(Session session) {
-        return tryFindFactory(session.getPluginId())
-                .map(plugin -> Objects.requireNonNull(plugin.createParserStrategy()));
+    private static Either<ParserStrategy> createParserStrategy(Session session) {
+        return Command.of(tryFindFactory(session.getPluginId()))
+                .map(plugin -> Objects.requireNonNull(plugin.createParserStrategy()))
+                .execute();
     }
 
     private PlaybackReportChanged createReportChangedEvent(ParserResult result, boolean appendToHistory) {

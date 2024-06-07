@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.Try;
+import com.nextbreakpoint.common.either.Either;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
 import com.nextbreakpoint.nextfractal.core.common.ParserStrategy;
@@ -60,7 +60,7 @@ public interface UIFactory {
 	 * @param resourceName
 	 * @return
 	 */
-	Try<String, Exception> loadResource(String resourceName);
+	Either<String> loadResource(String resourceName);
 
 	/**
 	 * @return

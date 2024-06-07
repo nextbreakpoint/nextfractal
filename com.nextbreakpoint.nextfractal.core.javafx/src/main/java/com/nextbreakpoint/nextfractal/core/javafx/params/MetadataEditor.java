@@ -24,12 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx.params;
 
-import com.nextbreakpoint.Try;
+import com.nextbreakpoint.common.command.Command;
+import com.nextbreakpoint.common.either.Either;
 import com.nextbreakpoint.nextfractal.core.common.ParamsStrategy;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
-import com.nextbreakpoint.nextfractal.core.event.EditorReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
@@ -97,8 +97,9 @@ public class MetadataEditor extends BorderPane {
 		}
 	}
 
-	public static Try<ParamsStrategy, Exception> createParamsStrategy(Session session) {
-		return tryFindFactory(session.getPluginId())
-				.map(plugin -> Objects.requireNonNull(plugin.createParamsStrategy()));
+	private static Either<ParamsStrategy> createParamsStrategy(Session session) {
+		return Command.of(tryFindFactory(session.getPluginId()))
+				.map(plugin -> Objects.requireNonNull(plugin.createParamsStrategy()))
+				.execute();
 	}
 }

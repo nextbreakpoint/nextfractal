@@ -29,7 +29,7 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>com.nextbreakpoint,com.fasterxml.jackson,org.openjfx</includeGroupIds>
-                            <excludeArtifactIds>com.nextbreakpoint.try4java,com.nextbreakpoint.ffmpeg4java,com.nextbreakpoint.freeimage4java</excludeArtifactIds>
+                            <excludeArtifactIds>com.nextbreakpoint.ffmpeg4java,com.nextbreakpoint.freeimage4java</excludeArtifactIds>
                             <outputDirectory>${modules.path}</outputDirectory>
                         </configuration>
                     </execution>

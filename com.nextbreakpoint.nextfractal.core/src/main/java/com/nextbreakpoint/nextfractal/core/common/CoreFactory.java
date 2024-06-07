@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
-import com.nextbreakpoint.Try;
+import com.nextbreakpoint.common.either.Either;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
@@ -77,5 +77,5 @@ public interface CoreFactory {
 	 * @param resourceName
 	 * @return
 	 */
-	public Try<String, Exception> loadResource(String resourceName);
+	public Either<String> loadResource(String resourceName);
 }

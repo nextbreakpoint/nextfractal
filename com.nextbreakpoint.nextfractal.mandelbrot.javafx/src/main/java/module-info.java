@@ -30,6 +30,7 @@ module com.nextbreakpoint.nextfractal.mandelbrot.javafx {
     requires java.prefs;
     requires java.logging;
     requires javafx.controls;
+    requires com.nextbreakpoint.common;
     requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     requires com.nextbreakpoint.nextfractal.mandelbrot;

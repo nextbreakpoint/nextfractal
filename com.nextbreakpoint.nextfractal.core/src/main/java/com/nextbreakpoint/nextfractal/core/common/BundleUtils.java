@@ -37,6 +37,6 @@ public class BundleUtils {
 
         final List<FileEntry> entries = Arrays.asList(manifestEntry, metadataEntry, scriptEntry);
 
-        return FileManager.decodeBundle(entries).orThrow();
+        return FileManager.decodeBundle(entries).orThrow().get();
     }
 }

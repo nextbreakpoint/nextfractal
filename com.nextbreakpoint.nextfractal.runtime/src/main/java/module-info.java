@@ -30,6 +30,7 @@ import com.nextbreakpoint.nextfractal.runtime.encode.QuicktimeVideoEncoder;
 module com.nextbreakpoint.nextfractal.runtime {
     requires static lombok;
     requires java.logging;
+    requires com.nextbreakpoint.common;
     requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     requires com.nextbreakpoint.nextfractal.mandelbrot;

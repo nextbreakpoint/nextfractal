@@ -43,6 +43,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <common.version>3.0.1</common.version>
         <openjfx.version>21.0.1</openjfx.version>
         <jackson.version>2.16.0</jackson.version>
         <lombok.version>1.18.30</lombok.version>
@@ -175,6 +176,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.nextbreakpoint</groupId>
+                <artifactId>com.nextbreakpoint.common</artifactId>
+                <version>${common.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-fxml</artifactId>
                 <version>${openjfx.version}</version>
@@ -228,6 +234,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nextbreakpoint</groupId>
+            <artifactId>com.nextbreakpoint.common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -33,6 +33,7 @@ module com.nextbreakpoint.nextfractal.contextfree {
     requires java.desktop;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
+    requires com.nextbreakpoint.common;
     requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     exports com.nextbreakpoint.nextfractal.contextfree.module;

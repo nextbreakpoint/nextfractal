@@ -32,7 +32,12 @@ import java.util.logging.LogManager;
 
 public class LogConfig {
 	public LogConfig() {
-		Block.create(a -> readConfiguration()).tryExecute().ifFailure(e -> e.printStackTrace(System.err));
+		Block.begin(a -> readConfiguration())
+				.end()
+				.execute()
+				.observe()
+				.onFailure(e -> e.printStackTrace(System.err))
+				.get();
 	}
 
 	private void readConfiguration() throws IOException {
